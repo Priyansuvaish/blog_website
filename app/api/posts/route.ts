@@ -7,9 +7,6 @@ export async function GET() {
   try {
     await connectDB()
     const posts = await Post.find()
-      .sort({ createdAt: -1 })
-      .lean()
-
     return NextResponse.json(posts)
   } catch (error) {
     console.error('Error fetching posts:', error)
@@ -22,21 +19,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { title, content, excerpt, category, readTime } = body
-
     await connectDB()
-    const post = await Post.create({
-      title,
-      content,
-      excerpt,
-      category,
-      readTime,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    })
-
-    return NextResponse.json(post)
+    const body = await request.json()
+    const post = await Post.create(body)
+    return NextResponse.json(post, { status: 201 })
   } catch (error) {
     console.error('Error creating post:', error)
     return NextResponse.json(

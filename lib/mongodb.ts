@@ -1,22 +1,30 @@
-import mongoose, { Connection } from 'mongoose'
+import mongoose from 'mongoose'
+
+// Define the type for our cached connection
+type MongooseCache = {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+}
 
 // Extend the global object type
 declare global {
-  var mongoose: {
-    conn: Connection | null;
-    promise: Promise<Connection> | null;
-  } | undefined;
+  var mongoose: MongooseCache | undefined;
 }
 
-const MONGODB_URI = process.env.MONGODB_URI
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/blog_website'
 
 if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
+  throw new Error('Please define the MONGODB_URI environment variable inside .env')
 }
 
-let cached = (global.mongoose ??= { conn: null, promise: null })
+// Initialize cached variable with proper type
+let cached: MongooseCache = global.mongoose || { conn: null, promise: null }
 
-async function connectDB(): Promise<Connection> {
+if (!global.mongoose) {
+  global.mongoose = cached
+}
+
+async function connectDB(): Promise<typeof mongoose> {
   if (cached.conn) {
     return cached.conn
   }
@@ -27,7 +35,7 @@ async function connectDB(): Promise<Connection> {
     }
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose.connection
+      return mongoose
     })
   }
 

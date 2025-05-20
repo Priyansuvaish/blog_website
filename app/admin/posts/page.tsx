@@ -27,7 +27,7 @@ export default function AdminPosts() {
           <h1 className="text-3xl font-bold">Posts</h1>
           <Link
             href="/admin/create-post"
-            className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800"
+            className="px-4 py-2 bg-custom-blue text-white rounded-lg hover:bg-opacity-90"
           >
             Create Post
           </Link>
@@ -44,7 +44,7 @@ export default function AdminPosts() {
           <h1 className="text-3xl font-bold">Posts</h1>
           <Link
             href="/admin/create-post"
-            className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800"
+            className="px-4 py-2 bg-custom-blue text-white rounded-lg hover:bg-opacity-90"
           >
             Create Post
           </Link>
@@ -62,7 +62,7 @@ export default function AdminPosts() {
         <h1 className="text-3xl font-bold">Posts</h1>
         <Link
           href="/admin/create-post"
-          className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800"
+          className="px-4 py-2 bg-custom-blue text-white rounded-lg hover:bg-opacity-90"
         >
           Create Post
         </Link>
@@ -94,7 +94,7 @@ export default function AdminPosts() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => router.push(`/admin/edit-post/${post._id}`)}
-                    className="px-3 py-1 text-blue-600 hover:text-blue-800"
+                    className="px-3 py-1 text-custom-blue hover:text-opacity-80"
                   >
                     Edit
                   </button>
