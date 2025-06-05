@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadBlogContentImage } from '../../../lib/google-drive';
+import { uploadBannerImage } from '../../../../lib/google-drive';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -7,7 +7,7 @@ const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file-0') as File;
+    const file = formData.get('file') as File;
 
     if (!file) {
       return NextResponse.json(
@@ -33,20 +33,18 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload to Google Drive
-    const imageUrl = await uploadBlogContentImage(file);
+    const imageUrl = await uploadBannerImage(file);
 
     return NextResponse.json({
-      result: [{
-        url: imageUrl,
-        name: file.name,
-        size: file.size
-      }]
+      url: imageUrl,
+      name: file.name,
+      size: file.size
     });
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Error uploading banner image:', error);
     
     // More detailed error response
-    const errorMessage = error instanceof Error ? error.message : 'Failed to upload file';
+    const errorMessage = error instanceof Error ? error.message : 'Failed to upload banner image';
     return NextResponse.json(
       { 
         error: errorMessage,

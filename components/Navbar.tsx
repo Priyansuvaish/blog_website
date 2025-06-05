@@ -21,10 +21,16 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full bg-white shadow flex items-center justify-between px-4 py-3">
+    <nav className="w-full bg-white shadow flex items-center justify-between px-6 py-6">
       {/* Logo */}
-      <div className="flex items-center gap-2">
-        <Link href="/" className="font-bold text-lg text-blue-700">Earthfields</Link>
+      <div className="flex items-center">
+        <Link href="/" className="flex items-center">
+          <img 
+            src="/EF_Journal_mainlogo.png" 
+            alt="Earthfields Logo" 
+            className="h-32 w-auto object-contain"
+          />
+        </Link>
       </div>
       {/* Nav Links */}
       <div className="hidden md:flex gap-6">

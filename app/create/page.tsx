@@ -36,11 +36,24 @@ export default function CreateBlogPage() {
 
   const handleImageUpload = async (file: File) => {
     try {
-      const key = generateUniqueKey(file);
-      return await uploadToS3({ file, key });
+      const imageUrl = await uploadToS3(file, `blog/body/${Date.now()}_image.jpeg`);
+      console.log('Body image uploaded successfully:', imageUrl);
+      return imageUrl;
     } catch (error) {
       console.error('Error uploading image:', error);
       setError('Failed to upload image. Please try again.');
+      throw error;
+    }
+  };
+
+  const handleCoverImageUpload = async (file: File) => {
+    try {
+      const imageUrl = await uploadToS3(file, `blog/cover/${Date.now()}_image.jpeg`);
+      console.log('Cover image uploaded successfully:', imageUrl);
+      return imageUrl;
+    } catch (error) {
+      console.error('Error uploading cover image:', error);
+      setError('Failed to upload cover image. Please try again.');
       throw error;
     }
   };
@@ -95,32 +108,40 @@ export default function CreateBlogPage() {
     setError('');
 
     try {
-      // First, upload the image
-      const imageUrl = await handleImageUpload(imageFile);
+      // First, upload the cover image
+      const coverImageUrl = await handleCoverImageUpload(imageFile);
+      console.log('Cover image uploaded successfully:', coverImageUrl);
 
       // Then, create the post with the image URL
+      const postData = {
+        title,
+        content,
+        coverImage: coverImageUrl,
+        sections: sections.map(section => section.title),
+      };
+      
+      console.log('Sending post data:', postData);
+
       const postResponse = await fetch('/api/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          title,
-          content,
-          coverImage: imageUrl,
-          sections: sections.map(section => section.title),
-        }),
+        body: JSON.stringify(postData),
       });
 
       if (!postResponse.ok) {
-        throw new Error('Failed to create post');
+        const errorData = await postResponse.json();
+        console.error('Server error response:', errorData);
+        throw new Error(errorData.error || 'Failed to create post');
       }
 
       const post = await postResponse.json();
+      console.log('Post created successfully:', post);
       router.push(`/article/${post._id}`);
     } catch (err) {
       console.error('Error creating blog post:', err);
-      setError('Failed to create blog post. Please try again.');
+      setError(err instanceof Error ? err.message : 'Failed to create blog post. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -235,6 +256,7 @@ export default function CreateBlogPage() {
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                   placeholder="Enter your blog title"
+                  suppressHydrationWarning
                 />
               </div>
 
@@ -263,6 +285,7 @@ export default function CreateBlogPage() {
                         }
                       }}
                       className="hidden"
+                      suppressHydrationWarning
                     />
                   </label>
                   {imagePreview && (
@@ -301,6 +324,7 @@ export default function CreateBlogPage() {
                       type="button"
                       onClick={() => setShowSectionDropdown(!showSectionDropdown)}
                       className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-custom-blue rounded-lg hover:bg-blue-100 transition-all duration-200 hover:scale-105"
+                      suppressHydrationWarning
                     >
                       <span>Add Section</span>
                       <svg
@@ -318,6 +342,7 @@ export default function CreateBlogPage() {
                           type="button"
                           onClick={addSection}
                           className="w-full px-4 py-2 text-left hover:bg-blue-50 text-custom-blue transition-colors duration-200"
+                          suppressHydrationWarning
                         >
                           Add New Section
                         </button>
@@ -339,12 +364,14 @@ export default function CreateBlogPage() {
                         onChange={(e) => updateSection(section.id, e.target.value)}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         placeholder="Section Title"
+                        suppressHydrationWarning
                       />
                       {sections.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeSection(section.id)}
                           className="ml-4 text-red-600 hover:text-red-700 transition-colors duration-200"
+                          suppressHydrationWarning
                         >
                           Remove
                         </button>
@@ -360,6 +387,7 @@ export default function CreateBlogPage() {
                   type="button"
                   onClick={togglePreview}
                   className="px-6 py-2 border border-custom-blue text-custom-blue rounded-lg hover:bg-blue-50 transition-all duration-200 hover:scale-105"
+                  suppressHydrationWarning
                 >
                   Preview
                 </button>
@@ -367,6 +395,7 @@ export default function CreateBlogPage() {
                   type="submit"
                   disabled={isSubmitting}
                   className="px-6 py-2 bg-custom-blue text-white rounded-lg hover:bg-opacity-90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                  suppressHydrationWarning
                 >
                   {isSubmitting ? 'Publishing...' : 'Publish Post'}
                 </button>

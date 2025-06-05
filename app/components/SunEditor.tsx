@@ -68,6 +68,8 @@ export default function Editor({ value, onChange, onImageUpload }: SunEditorProp
       if (onImageUpload) {
         try {
           const imageUrl = await onImageUpload(file);
+          console.log("xyz imageURL", imageUrl);
+
           callback(imageUrl);
         } catch (error) {
           console.error('Error uploading image:', error);

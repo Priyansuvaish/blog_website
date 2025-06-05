@@ -32,7 +32,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "types/**/*.d.ts"
-  ],
+, "lib/aws-s3.js"  ],
   "exclude": [
     "node_modules"
   ]
