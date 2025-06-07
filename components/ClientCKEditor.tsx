@@ -11,6 +11,53 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
   const [Editor, setEditor] = useState<any>(null)
   const [editorError, setEditorError] = useState<string | null>(null)
 
+  // Custom upload adapter for CKEditor
+  class UploadAdapter {
+    loader: any
+    
+    constructor(loader: any) {
+      this.loader = loader
+    }
+
+    upload() {
+      return this.loader.file.then((file: File) => {
+        return new Promise((resolve, reject) => {
+          const formData = new FormData()
+          formData.append('upload', file)
+
+          fetch('/api/upload-image', {
+            method: 'POST',
+            body: formData,
+          })
+            .then(response => response.json())
+            .then(result => {
+              if (result.error) {
+                reject(result.error)
+              } else {
+                resolve({
+                  default: result.url
+                })
+              }
+            })
+            .catch(error => {
+              reject(error)
+            })
+        })
+      })
+    }
+
+    abort() {
+      // Abort upload if needed
+    }
+  }
+
+  // Plugin function to register the upload adapter
+  function uploadPlugin(editor: any) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
+      return new UploadAdapter(loader)
+    }
+  }
+
   useEffect(() => {
     let isMounted = true
 
@@ -66,6 +113,41 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
       <CKEditor
         editor={ClassicEditor}
         data={value}
+        config={{
+          extraPlugins: [uploadPlugin],
+          toolbar: [
+            'heading',
+            '|',
+            'bold',
+            'italic',
+            'link',
+            '|',
+            'bulletedList',
+            'numberedList',
+            '|',
+            'outdent',
+            'indent',
+            '|',
+            'blockQuote',
+            'insertTable',
+            '|',
+            'imageUpload',
+            'imageInsert',
+            '|',
+            'undo',
+            'redo'
+          ],
+          image: {
+            toolbar: [
+              'imageTextAlternative',
+              'imageStyle:inline',
+              'imageStyle:block',
+              'imageStyle:side',
+              '|',
+              'toggleImageCaption'
+            ]
+          }
+        }}
         onChange={(event: any, editor: any) => {
           try {
             const data = editor.getData()
@@ -75,24 +157,9 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
             setEditorError('Error updating content. Please try again.')
           }
         }}
-        config={{
-          toolbar: [
-            'heading',
-            '|',
-            'bold',
-            'italic',
-            'link',
-            'bulletedList',
-            'numberedList',
-            '|',
-            'outdent',
-            'indent',
-            '|',
-            'blockQuote',
-            'insertTable',
-            'undo',
-            'redo'
-          ]
+        onError={(error: any) => {
+          console.error('CKEditor error:', error)
+          setEditorError('Editor error occurred. Please refresh the page.')
         }}
       />
       <style jsx global>{`
@@ -108,6 +175,16 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
         .ck.ck-editor__editable_inline:focus {
           border-color: #3b82f6 !important;
           box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5) !important;
+        }
+        .ck-file-dialog-button {
+          display: inline-block;
+        }
+        .ck-upload-placeholder {
+          background: #f0f0f0;
+          border: 1px dashed #ccc;
+          padding: 20px;
+          text-align: center;
+          margin: 10px 0;
         }
       `}</style>
     </div>
