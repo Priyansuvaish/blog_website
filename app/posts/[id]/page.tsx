@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import Image from 'next/image'
 import { Post } from '@/hooks/usePosts'
 import CommentSection from '@/components/CommentSection'
 
@@ -54,7 +55,7 @@ export default function PostPage() {
       <article className="mb-12">
         <header className="mb-8">
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          <div className="flex gap-4 text-sm text-gray-500">
+          <div className="flex gap-4 text-sm text-gray-500 mb-6">
             <span>Category: {post.category}</span>
             <span>Read time: {post.readTime}</span>
             <span>
@@ -62,6 +63,20 @@ export default function PostPage() {
             </span>
           </div>
         </header>
+
+        {/* Cover Image */}
+        {post.coverImage && (
+          <div className="relative w-full h-96 mb-8 rounded-lg overflow-hidden">
+            <Image
+              src={post.coverImage}
+              alt={post.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority
+            />
+          </div>
+        )}
 
         <div className="prose prose-lg max-w-none">
           <div dangerouslySetInnerHTML={{ __html: post.content }} />

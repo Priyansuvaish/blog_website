@@ -8,6 +8,7 @@ export interface Post {
   category: string
   readTime: string
   content: string
+  coverImage?: string
   createdAt: string
   updatedAt: string
 }

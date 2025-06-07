@@ -23,7 +23,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { title, content, excerpt, category, readTime } = body
+    const { title, content, excerpt, category, readTime, coverImage } = body
 
     await connectDB()
     
@@ -34,6 +34,7 @@ export async function POST(request: Request) {
       excerpt,
       category,
       readTime,
+      coverImage,
       createdAt: new Date(),
       updatedAt: new Date()
     })
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json()
-    const { id, title, content, excerpt, category, readTime } = body
+    const { id, title, content, excerpt, category, readTime, coverImage } = body
 
     await connectDB()
     
@@ -79,6 +80,7 @@ export async function PUT(request: Request) {
     post.excerpt = excerpt
     post.category = category
     post.readTime = readTime
+    post.coverImage = coverImage
     post.updatedAt = new Date()
     
     // Save the post (this will trigger slug regeneration if title changed)

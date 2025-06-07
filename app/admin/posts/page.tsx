@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePosts, Post } from '@/hooks/usePosts'
 
 export default function AdminPosts() {
@@ -77,33 +78,73 @@ export default function AdminPosts() {
           {posts.map((post: Post) => (
             <div
               key={post._id}
-              className="bg-white rounded-lg shadow-md p-6"
+              className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                  <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                  <div className="flex gap-4 text-sm text-gray-500">
-                    <span>Category: {post.category}</span>
-                    <span>Read time: {post.readTime}</span>
-                    <span>
-                      Created: {new Date(post.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
+              <div className="flex">
+                {/* Cover Image */}
+                <div className="w-48 h-32 flex-shrink-0 relative bg-gray-100">
+                  {post.coverImage ? (
+                    <Image
+                      src={post.coverImage}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 192px"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <svg
+                        className="w-12 h-12 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                  )}
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => router.push(`/admin/edit-post/${post._id}`)}
-                    className="px-3 py-1 text-blue-600 hover:text-blue-800"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(post._id)}
-                    className="px-3 py-1 text-red-600 hover:text-red-800"
-                  >
-                    Delete
-                  </button>
+
+                {/* Post Content */}
+                <div className="flex-1 p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
+                      <p className="text-gray-600 mb-4 line-clamp-2">{post.excerpt}</p>
+                      <div className="flex gap-4 text-sm text-gray-500">
+                        <span>Category: {post.category}</span>
+                        <span>Read time: {post.readTime}</span>
+                        <span>
+                          Created: {new Date(post.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        onClick={() => router.push(`/posts/${post._id}`)}
+                        className="px-3 py-1 text-green-600 hover:text-green-800"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => router.push(`/admin/edit-post/${post._id}`)}
+                        className="px-3 py-1 text-blue-600 hover:text-blue-800"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(post._id)}
+                        className="px-3 py-1 text-red-600 hover:text-red-800"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

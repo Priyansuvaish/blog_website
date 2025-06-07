@@ -20,6 +20,7 @@ const postSchema = new mongoose.Schema({
   excerpt: { type: String, required: true },
   category: { type: String, required: true },
   readTime: { type: String, required: true },
+  coverImage: { type: String }, // URL for cover image
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 })

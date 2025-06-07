@@ -66,7 +66,8 @@ export const extractKeyFromPresignedUrl = (url: string): string | null => {
   }
 }
 
-// Check if URL is our presigned URL
+// Check if URL is our presigned URL (for blog images or cover images)
 export const isOurPresignedUrl = (url: string): boolean => {
-  return url.includes(BUCKET_NAME) && url.includes('amazonaws.com')
+  return url.includes(BUCKET_NAME) && url.includes('amazonaws.com') && 
+         (url.includes('blog-images/') || url.includes('cover-images/'))
 } 

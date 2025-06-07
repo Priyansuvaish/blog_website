@@ -8,6 +8,7 @@ export type Post = {
   excerpt: string
   category: string
   readTime: string
+  coverImage?: string
   author: Types.ObjectId | User
   createdAt: Date
   updatedAt: Date

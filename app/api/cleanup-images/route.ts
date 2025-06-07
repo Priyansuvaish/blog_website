@@ -17,37 +17,55 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB()
 
-    // Get all images from S3
-    const listCommand = new ListObjectsV2Command({
+    // Get all images from S3 (both blog and cover images)
+    const listBlogImages = new ListObjectsV2Command({
       Bucket: BUCKET_NAME,
       Prefix: 'blog-images/'
     })
+    const listCoverImages = new ListObjectsV2Command({
+      Bucket: BUCKET_NAME,
+      Prefix: 'cover-images/'
+    })
 
-    const s3Objects = await s3Client.send(listCommand)
-    const s3ImageKeys = s3Objects.Contents?.map(obj => obj.Key).filter(key => key != null) as string[] || []
+    const [blogObjects, coverObjects] = await Promise.all([
+      s3Client.send(listBlogImages),
+      s3Client.send(listCoverImages)
+    ])
+
+    const blogImageKeys = blogObjects.Contents?.map(obj => obj.Key).filter(key => key != null) as string[] || []
+    const coverImageKeys = coverObjects.Contents?.map(obj => obj.Key).filter(key => key != null) as string[] || []
+    const allImageKeys = [...blogImageKeys, ...coverImageKeys]
 
     // Get all posts from database
-    const posts = await Post.find({}, 'content').lean()
+    const posts = await Post.find({}, 'content coverImage').lean()
 
     // Extract all image keys used in posts (from presigned URLs)
     const usedImages = new Set<string>()
     const regex = /<img[^>]+src="([^">]+)"/gi
 
     posts.forEach(post => {
+      // Check content images
       let match
       while ((match = regex.exec(post.content)) !== null) {
         if (isOurPresignedUrl(match[1])) {
-          // Extract key from presigned URL
           const key = extractKeyFromPresignedUrl(match[1])
           if (key) {
             usedImages.add(key)
           }
         }
       }
+
+      // Check cover image
+      if (post.coverImage && isOurPresignedUrl(post.coverImage)) {
+        const key = extractKeyFromPresignedUrl(post.coverImage)
+        if (key) {
+          usedImages.add(key)
+        }
+      }
     })
 
     // Find orphaned images
-    const orphanedImages = s3ImageKeys.filter(key => !usedImages.has(key))
+    const orphanedImages = allImageKeys.filter(key => !usedImages.has(key))
 
     // Delete orphaned images
     let deletedCount = 0
@@ -65,6 +83,8 @@ export async function POST(request: NextRequest) {
       success: true,
       deletedCount,
       orphanedImages: orphanedImages.length,
+      blogImages: blogImageKeys.length,
+      coverImages: coverImageKeys.length,
       message: `Cleaned up ${deletedCount} orphaned images`
     })
 

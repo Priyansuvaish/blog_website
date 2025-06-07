@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
+import CoverImageUpload from './CoverImageUpload'
 
 const ClientCKEditor = dynamic(
   () => import('./ClientCKEditor'),
@@ -17,6 +18,7 @@ interface PostEditorProps {
     excerpt: string
     category: string
     readTime: string
+    coverImage?: string
   }
 }
 
@@ -27,9 +29,11 @@ export default function PostEditor({ post }: PostEditorProps) {
   const [excerpt, setExcerpt] = useState(post?.excerpt || '')
   const [category, setCategory] = useState(post?.category || '')
   const [readTime, setReadTime] = useState(post?.readTime || '')
+  const [coverImage, setCoverImage] = useState<string | null>(post?.coverImage || null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [initialImages, setInitialImages] = useState<string[]>([])
+  const [initialCoverImage, setInitialCoverImage] = useState<string | null>(null)
 
   // Extract image URLs from content (now works with presigned URLs)
   const extractImageUrls = (htmlContent: string): string[] => {
@@ -69,6 +73,9 @@ export default function PostEditor({ post }: PostEditorProps) {
       const images = extractImageUrls(post.content)
       setInitialImages(images)
     }
+    if (post?.coverImage) {
+      setInitialCoverImage(post.coverImage)
+    }
   }, [post])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -92,6 +99,7 @@ export default function PostEditor({ post }: PostEditorProps) {
           excerpt,
           category,
           readTime,
+          coverImage,
         }),
       })
 
@@ -102,6 +110,19 @@ export default function PostEditor({ post }: PostEditorProps) {
       // Clean up unused images if editing existing post
       if (post) {
         await deleteUnusedImages(initialImages, currentImages)
+        
+        // Clean up old cover image if changed
+        if (initialCoverImage && initialCoverImage !== coverImage) {
+          try {
+            await fetch('/api/delete-image', {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageUrl: initialCoverImage })
+            })
+          } catch (error) {
+            console.error('Failed to delete old cover image:', error)
+          }
+        }
       }
 
       router.push('/admin/posts')
@@ -137,6 +158,11 @@ export default function PostEditor({ post }: PostEditorProps) {
           {error}
         </div>
       )}
+
+      <CoverImageUpload
+        value={coverImage}
+        onChange={setCoverImage}
+      />
 
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">
