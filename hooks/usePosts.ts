@@ -3,6 +3,7 @@ import useSWR from 'swr'
 export interface Post {
   _id: string
   title: string
+  slug: string
   excerpt: string
   category: string
   readTime: string

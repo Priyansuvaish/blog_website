@@ -3,6 +3,7 @@ import { Types } from 'mongoose'
 export type Post = {
   _id: Types.ObjectId
   title: string
+  slug: string
   content: string
   excerpt: string
   category: string

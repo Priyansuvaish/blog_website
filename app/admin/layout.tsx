@@ -10,23 +10,25 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
+  // TODO: Add loading state
+  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    const user = localStorage.getItem('user')
-    if (!user) {
-      router.push('/login')
-      return
-    }
+  // TODO: Add auth check for tmporaray it removed so that I can access it without login
+  // useEffect(() => {
+  //   const user = localStorage.getItem('user')
+  //   if (!user) {
+  //     router.push('/login')
+  //     return
+  //   }
 
-    const userData = JSON.parse(user)
-    if (userData.role !== 'admin') {
-      router.push('/')
-      return
-    }
+  //   const userData = JSON.parse(user)
+  //   if (userData.role !== 'admin') {
+  //     router.push('/')
+  //     return
+  //   }
 
-    setIsLoading(false)
-  }, [router])
+  //   setIsLoading(false)
+  // }, [router])
 
   if (isLoading) {
     return (
