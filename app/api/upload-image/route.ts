@@ -1,17 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import { v4 as uuidv4 } from 'uuid'
-
-// Configure AWS S3 client
-const s3Client = new S3Client({
-  region: process.env.NEXT_PUBLIC_AWS_REGION || 'ap-southeast-2',
-  credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY || '',
-  },
-})
-
-const BUCKET_NAME = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || 'your-default-bucket'
+import { uploadFileAndGetPresignedUrl } from '@/lib/s3'
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,22 +40,15 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Upload to S3
-    const uploadCommand = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: fileName,
-      Body: buffer,
-      ContentType: file.type,
-      // ACL removed - using bucket policy instead for public access
-    })
-
-    await s3Client.send(uploadCommand)
-
-    // Construct the public URL
-    const imageUrl = `https://${BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION || 'ap-southeast-2'}.amazonaws.com/${fileName}`
+    // Upload file and get presigned URL
+    const presignedUrl = await uploadFileAndGetPresignedUrl(
+      buffer,
+      fileName,
+      file.type
+    )
 
     return NextResponse.json({
-      url: imageUrl,
+      url: presignedUrl,
       uploaded: 1 // CKEditor expects this format
     })
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 
@@ -29,6 +29,47 @@ export default function PostEditor({ post }: PostEditorProps) {
   const [readTime, setReadTime] = useState(post?.readTime || '')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [initialImages, setInitialImages] = useState<string[]>([])
+
+  // Extract image URLs from content (now works with presigned URLs)
+  const extractImageUrls = (htmlContent: string): string[] => {
+    const regex = /<img[^>]+src="([^">]+)"/gi
+    const matches = []
+    let match
+    while ((match = regex.exec(htmlContent)) !== null) {
+      // Check if it's our S3 presigned URL
+      if (match[1].includes('propertydetail') && match[1].includes('amazonaws.com')) {
+        matches.push(match[1])
+      }
+    }
+    return matches
+  }
+
+  // Delete unused images from S3
+  const deleteUnusedImages = async (currentImages: string[], newImages: string[]) => {
+    const imagesToDelete = currentImages.filter(img => !newImages.includes(img))
+    
+    for (const imageUrl of imagesToDelete) {
+      try {
+        await fetch('/api/delete-image', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageUrl })
+        })
+        console.log('Deleted unused image:', imageUrl)
+      } catch (error) {
+        console.error('Failed to delete image:', imageUrl, error)
+      }
+    }
+  }
+
+  // Initialize with existing images when editing
+  useEffect(() => {
+    if (post?.content) {
+      const images = extractImageUrls(post.content)
+      setInitialImages(images)
+    }
+  }, [post])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,6 +77,9 @@ export default function PostEditor({ post }: PostEditorProps) {
     setError(null)
 
     try {
+      // Get current images from content
+      const currentImages = extractImageUrls(content)
+
       const response = await fetch('/api/posts', {
         method: post ? 'PUT' : 'POST',
         headers: {
@@ -55,6 +99,11 @@ export default function PostEditor({ post }: PostEditorProps) {
         throw new Error('Failed to save post')
       }
 
+      // Clean up unused images if editing existing post
+      if (post) {
+        await deleteUnusedImages(initialImages, currentImages)
+      }
+
       router.push('/admin/posts')
       router.refresh()
     } catch (error) {
@@ -62,6 +111,22 @@ export default function PostEditor({ post }: PostEditorProps) {
       setError('Failed to save post. Please try again.')
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent)
+    
+    // If editing existing post, clean up images in real-time
+    if (post) {
+      const currentImages = extractImageUrls(content)
+      const newImages = extractImageUrls(newContent)
+      
+      // Delete images that were removed
+      const removedImages = currentImages.filter(img => !newImages.includes(img))
+      if (removedImages.length > 0) {
+        deleteUnusedImages(removedImages, [])
+      }
     }
   }
 
@@ -94,7 +159,7 @@ export default function PostEditor({ post }: PostEditorProps) {
         <div className="mt-1">
           <ClientCKEditor
             value={content}
-            onChange={setContent}
+            onChange={handleContentChange}
           />
         </div>
       </div>

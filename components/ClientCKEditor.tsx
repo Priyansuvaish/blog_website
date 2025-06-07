@@ -10,6 +10,7 @@ interface ClientCKEditorProps {
 export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps) {
   const [Editor, setEditor] = useState<any>(null)
   const [editorError, setEditorError] = useState<string | null>(null)
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null)
 
   // Custom upload adapter for CKEditor
   class UploadAdapter {
@@ -22,6 +23,8 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
     upload() {
       return this.loader.file.then((file: File) => {
         return new Promise((resolve, reject) => {
+          setUploadStatus('Uploading image...')
+          
           const formData = new FormData()
           formData.append('upload', file)
 
@@ -29,25 +32,42 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
             method: 'POST',
             body: formData,
           })
-            .then(response => response.json())
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`)
+              }
+              return response.json()
+            })
             .then(result => {
+              setUploadStatus('Upload complete!')
+              setTimeout(() => setUploadStatus(null), 2000)
+              
               if (result.error) {
                 reject(result.error)
               } else {
+                // CKEditor expects this exact format
                 resolve({
-                  default: result.url
+                  default: result.url,
+                  '160': result.url,
+                  '500': result.url,
+                  '1000': result.url,
+                  '1052': result.url
                 })
               }
             })
             .catch(error => {
-              reject(error)
+              console.error('Upload error:', error)
+              setUploadStatus('Upload failed!')
+              setTimeout(() => setUploadStatus(null), 3000)
+              reject(error.message || 'Upload failed')
             })
         })
       })
     }
 
     abort() {
-      // Abort upload if needed
+      setUploadStatus('Upload cancelled')
+      setTimeout(() => setUploadStatus(null), 2000)
     }
   }
 
@@ -110,6 +130,15 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
 
   return (
     <div className="ckeditor-wrapper">
+      {uploadStatus && (
+        <div className={`p-2 mb-2 rounded text-sm ${
+          uploadStatus.includes('failed') ? 'bg-red-100 text-red-700' :
+          uploadStatus.includes('complete') ? 'bg-green-100 text-green-700' :
+          'bg-blue-100 text-blue-700'
+        }`}>
+          {uploadStatus}
+        </div>
+      )}
       <CKEditor
         editor={ClassicEditor}
         data={value}
@@ -186,7 +215,35 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
           text-align: center;
           margin: 10px 0;
         }
+        /* Ensure images display properly */
+        .ck-content .image {
+          display: block;
+          margin: 1em auto;
+        }
+        .ck-content .image img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+        }
+        /* Fix for image widget display */
+        .ck-widget.image {
+          text-align: center;
+        }
+        .ck-widget.image img {
+          max-width: 100%;
+          height: auto;
+        }
+        /* Loading indicator for images */
+        .ck-content img[src] {
+          transition: opacity 0.3s ease;
+        }
+        .ck-content img:not([src]),
+        .ck-content img[src=""] {
+          opacity: 0.5;
+          background: #f0f0f0;
+          border: 1px dashed #ccc;
+        }
       `}</style>
     </div>
   )
-} 
+}
