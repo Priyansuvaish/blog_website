@@ -32,22 +32,22 @@ const LayoutWrapper: React.FC<LayoutWrapperProps> = ({ children }) => {
           w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out
           md:translate-x-0 md:relative md:z-auto
           ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:block absolute inset-y-0 left-0 z-50
+          md:block absolute inset-y-0 left-0 z-40
         `}>
           <SideNavbar onItemClick={closeMobileSidebar} />
         </div>
-
-        {/* Mobile overlay backdrop */}
-        {isMobileSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-            onClick={closeMobileSidebar}
-          />
-        )}
         
         {/* Main content */}
-        <div className="flex-1 overflow-hidden">
-          <main className="h-full overflow-y-auto p-6">
+        <div className="flex-1 overflow-hidden relative">
+          {/* Mobile overlay backdrop - only inside main content area */}
+          {isMobileSidebarOpen && (
+            <div 
+              className="absolute inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+              onClick={closeMobileSidebar}
+            />
+          )}
+          
+          <main className="h-full overflow-y-auto p-6 relative z-10">
             {children}
           </main>
         </div>
