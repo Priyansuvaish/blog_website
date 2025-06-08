@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import CategoryIcon from '@/components/CategoryIcon'
+import { 
+  MdCategory, MdArticle, MdScience, MdSportsSoccer, MdMusicNote, 
+  MdMovie, MdPalette, MdFastfood, MdDirectionsCar, MdHome,
+  MdWork, MdSchool, MdHealthAndSafety, MdPhoneAndroid, MdShoppingCart,
+  MdFlight, MdCamera, MdGames, MdPets, MdEco 
+} from 'react-icons/md'
 
 interface Post {
   _id: string
@@ -12,10 +19,35 @@ interface Post {
 interface Category {
   _id: string
   name: string
+  icon: string
   post_ids: Post[]
   createdAt: string
   updatedAt: string
 }
+
+// Icon mapping for the dropdown
+const iconOptions = [
+  { value: 'MdCategory', icon: MdCategory, label: 'Default Category' },
+  { value: 'MdArticle', icon: MdArticle, label: 'Articles' },
+  { value: 'MdScience', icon: MdScience, label: 'Science' },
+  { value: 'MdSportsSoccer', icon: MdSportsSoccer, label: 'Sports' },
+  { value: 'MdMusicNote', icon: MdMusicNote, label: 'Music' },
+  { value: 'MdMovie', icon: MdMovie, label: 'Movies' },
+  { value: 'MdPalette', icon: MdPalette, label: 'Art & Design' },
+  { value: 'MdFastfood', icon: MdFastfood, label: 'Food' },
+  { value: 'MdDirectionsCar', icon: MdDirectionsCar, label: 'Automotive' },
+  { value: 'MdHome', icon: MdHome, label: 'Home & Garden' },
+  { value: 'MdWork', icon: MdWork, label: 'Business' },
+  { value: 'MdSchool', icon: MdSchool, label: 'Education' },
+  { value: 'MdHealthAndSafety', icon: MdHealthAndSafety, label: 'Health' },
+  { value: 'MdPhoneAndroid', icon: MdPhoneAndroid, label: 'Technology' },
+  { value: 'MdShoppingCart', icon: MdShoppingCart, label: 'Shopping' },
+  { value: 'MdFlight', icon: MdFlight, label: 'Travel' },
+  { value: 'MdCamera', icon: MdCamera, label: 'Photography' },
+  { value: 'MdGames', icon: MdGames, label: 'Gaming' },
+  { value: 'MdPets', icon: MdPets, label: 'Pets' },
+  { value: 'MdEco', icon: MdEco, label: 'Environment' }
+]
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -23,7 +55,7 @@ export default function CategoriesPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
-  const [formData, setFormData] = useState({ name: '', post_ids: [] as string[] })
+  const [formData, setFormData] = useState({ name: '', icon: 'MdCategory', post_ids: [] as string[] })
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -114,7 +146,7 @@ export default function CategoriesPage() {
   }
 
   const resetForm = () => {
-    setFormData({ name: '', post_ids: [] })
+    setFormData({ name: '', icon: 'MdCategory', post_ids: [] })
     setEditingCategory(null)
     setShowCreateForm(false)
     setError(null)
@@ -124,6 +156,7 @@ export default function CategoriesPage() {
     setEditingCategory(category)
     setFormData({
       name: category.name,
+      icon: category.icon || 'MdCategory',
       post_ids: category.post_ids.map(post => post._id)
     })
     setShowCreateForm(true)
@@ -187,6 +220,32 @@ export default function CategoriesPage() {
             </div>
 
             <div>
+              <label htmlFor="icon" className="block text-sm font-medium text-gray-700 mb-2">
+                Category Icon
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 p-4 border rounded-lg bg-white max-h-60 overflow-y-auto">
+                {iconOptions.map((option) => {
+                  const IconComponent = option.icon
+                  return (
+                    <div
+                      key={option.value}
+                      onClick={() => setFormData(prev => ({ ...prev, icon: option.value }))}
+                      className={`flex flex-col items-center p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                        formData.icon === option.value
+                          ? 'bg-blue-100 border-2 border-blue-500 text-blue-700'
+                          : 'bg-gray-50 border border-gray-200 hover:bg-gray-100'
+                      }`}
+                    >
+                      <IconComponent className="text-2xl mb-1" />
+                      <span className="text-xs text-center">{option.label}</span>
+                    </div>
+                  )
+                })}
+              </div>
+              <p className="text-sm text-gray-500 mt-1">Click on an icon to select it for your category</p>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Posts for this Category
               </label>
@@ -240,11 +299,19 @@ export default function CategoriesPage() {
           categories.map(category => (
             <div key={category._id} className="bg-white p-6 rounded-lg shadow border">
               <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold">{category.name}</h3>
-                  <p className="text-sm text-gray-500">
-                    {category.post_ids.length} post{category.post_ids.length !== 1 ? 's' : ''}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                    <CategoryIcon 
+                      iconName={category.icon || 'MdCategory'} 
+                      className="w-5 h-5 text-white" 
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold">{category.name}</h3>
+                    <p className="text-sm text-gray-500">
+                      {category.post_ids.length} post{category.post_ids.length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
                 </div>
                 <div className="flex space-x-2">
                   <button

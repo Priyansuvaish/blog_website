@@ -7,6 +7,10 @@ const categorySchema = new mongoose.Schema({
     unique: true,
     trim: true
   },
+  icon: {
+    type: String,
+    default: 'MdCategory'
+  },
   post_ids: [{ 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Post' 

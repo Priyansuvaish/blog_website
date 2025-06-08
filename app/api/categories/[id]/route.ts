@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     await connectDB()
-    const { name, post_ids } = await request.json()
+    const { name, icon, post_ids } = await request.json()
 
     if (!name) {
       return NextResponse.json({ error: 'Category name is required' }, { status: 400 })
@@ -53,9 +53,21 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       }
     }
 
+    // Prepare update object
+    const updateData: any = { 
+      name, 
+      post_ids: post_ids || [],
+      updatedAt: new Date()
+    }
+    
+    // Only update icon if provided
+    if (icon) {
+      updateData.icon = icon
+    }
+
     const updatedCategory = await Category.findByIdAndUpdate(
       params.id,
-      { name, post_ids: post_ids || [] },
+      updateData,
       { new: true }
     ).populate('post_ids', 'title slug')
 

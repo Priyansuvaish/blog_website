@@ -34,7 +34,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     await connectDB()
-    const { name, post_ids = [] } = await request.json()
+    const { name, icon = 'MdCategory', post_ids = [] } = await request.json()
 
     if (!name) {
       return NextResponse.json({ error: 'Category name is required' }, { status: 400 })
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const category = new Category({ name, post_ids })
+    const category = new Category({ name, icon, post_ids })
     await category.save()
 
     const populatedCategory = await Category.findById(category._id).populate('post_ids', 'title slug')
