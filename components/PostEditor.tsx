@@ -28,6 +28,7 @@ export default function PostEditor({ post }: PostEditorProps) {
   const [content, setContent] = useState(post?.content || '')
   const [excerpt, setExcerpt] = useState(post?.excerpt || '')
   const [category, setCategory] = useState(post?.category || '')
+  const [categories, setCategories] = useState<{_id: string, name: string}[]>([])
   const [readTime, setReadTime] = useState(post?.readTime || '')
   const [coverImage, setCoverImage] = useState<string | null>(post?.coverImage || null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -77,6 +78,22 @@ export default function PostEditor({ post }: PostEditorProps) {
       setInitialCoverImage(post.coverImage)
     }
   }, [post])
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories')
+        if (response.ok) {
+          const categoriesData = await response.json()
+          setCategories(categoriesData)
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error)
+      }
+    }
+    fetchCategories()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -208,14 +225,25 @@ export default function PostEditor({ post }: PostEditorProps) {
         <label htmlFor="category" className="block text-sm font-medium text-gray-700">
           Category
         </label>
-        <input
-          type="text"
+        <select
           id="category"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
           required
-        />
+        >
+          <option value="">Select a category</option>
+          {categories.map(cat => (
+            <option key={cat._id} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+        {categories.length === 0 && (
+          <p className="mt-1 text-sm text-gray-500">
+            No categories available. <a href="/admin/categories" className="text-blue-600 hover:underline">Create categories first</a>.
+          </p>
+        )}
       </div>
 
       <div>

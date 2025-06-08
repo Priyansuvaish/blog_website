@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import Post from '@/models/Post'
 import User from '@/models/User'
+import Category from '@/models/Category'
 import connectDB from '@/lib/mongodb'
 
 export async function GET() {
@@ -39,6 +40,15 @@ export async function POST(request: Request) {
       updatedAt: new Date()
     })
 
+    // Update category to include this post if category exists
+    if (category) {
+      const categoryDoc = await Category.findOne({ name: category })
+      if (categoryDoc && !categoryDoc.post_ids.includes(post._id)) {
+        categoryDoc.post_ids.push(post._id)
+        await categoryDoc.save()
+      }
+    }
+
     return NextResponse.json(post)
   } catch (error: any) {
     console.error('Error creating post:', error)
@@ -74,6 +84,8 @@ export async function PUT(request: Request) {
       )
     }
     
+    const oldCategory = post.category
+    
     // Update the post fields
     post.title = title
     post.content = content
@@ -85,6 +97,29 @@ export async function PUT(request: Request) {
     
     // Save the post (this will trigger slug regeneration if title changed)
     await post.save()
+
+    // Handle category changes
+    if (oldCategory !== category) {
+      // Remove from old category
+      if (oldCategory) {
+        const oldCategoryDoc = await Category.findOne({ name: oldCategory })
+        if (oldCategoryDoc) {
+          oldCategoryDoc.post_ids = oldCategoryDoc.post_ids.filter(
+            (postId: any) => postId.toString() !== id
+          )
+          await oldCategoryDoc.save()
+        }
+      }
+      
+      // Add to new category
+      if (category) {
+        const newCategoryDoc = await Category.findOne({ name: category })
+        if (newCategoryDoc && !newCategoryDoc.post_ids.includes(post._id)) {
+          newCategoryDoc.post_ids.push(post._id)
+          await newCategoryDoc.save()
+        }
+      }
+    }
 
     return NextResponse.json(post)
   } catch (error: any) {

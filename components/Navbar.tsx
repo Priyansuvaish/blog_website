@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { RiMenu3Line } from "react-icons/ri";
 import { IoMdClose } from "react-icons/io";
@@ -37,12 +38,12 @@ const Navbar = () => {
     <>
       {/* Main Navbar */}
       <div className="relative bg-white shadow-md px-4 lg:px-8 z-50">
-        <nav className="flex justify-between items-center max-w-8xl mx-auto py-4">
+        <nav className="flex justify-between items-center max-w-7xl mx-auto py-4">
           {/* Logo */}
           <div className="logo">
-            <Link href="/" className="flex items-center">
-              <img src={logoUrl} alt="Logo" className="h-10 w-auto" />
-            </Link>
+            <Link href="/" className="flex items-center p-2">
+              <Image src={logoUrl} alt="Logo" width={190} height={10} className="object-contain" priority/>
+              </Link>
           </div>
 
           {/* Mobile menu trigger */}
@@ -99,8 +100,14 @@ const Navbar = () => {
           <div className="flex justify-between items-center p-6 border-b border-gray-200">
             <div className="mobile-logo">
               <Link href="/" onClick={handleLinkClick} className="flex items-center">
-                <img src={logoUrl} alt="Logo" className="h-8 w-auto" />
-                <span className="text-[28px] font-bold text-[#009DFF]">Blogs</span>
+                <Image 
+                  src={logoUrl} 
+                  alt="Logo" 
+                  width={120}
+                  height={45}
+                  className="object-contain"
+                  priority
+                />
               </Link>
             </div>
             <button
