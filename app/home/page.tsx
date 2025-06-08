@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface Category {
   _id: string
@@ -22,6 +23,23 @@ interface Post {
   excerpt: string
   createdAt: string
   category: string
+  coverImage?: string
+}
+
+// Function to format relative date
+const formatRelativeDate = (dateString: string): string => {
+  const now = new Date()
+  const postDate = new Date(dateString)
+  const diffInMs = now.getTime() - postDate.getTime()
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
+  
+  if (diffInDays === 0) {
+    return 'Today'
+  } else if (diffInDays === 1) {
+    return '1d ago'
+  } else {
+    return `${diffInDays}d ago`
+  }
 }
 
 export default function HomePage() {
@@ -180,20 +198,31 @@ export default function HomePage() {
                       href={`/post/${post.slug}`}
                       className="block group"
                     >
-                      <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4">
-                        <h4 className="font-semibold text-gray-900 text-sm mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                          {post.title}
-                        </h4>
-                        <p className="text-xs text-gray-600 mb-2 line-clamp-3">
-                          {post.excerpt}
-                        </p>
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                            {post.category}
-                          </span>
-                          <span>
-                            {new Date(post.createdAt).toLocaleDateString()}
-                          </span>
+                      <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
+                        {/* Cover Image */}
+                        {post.coverImage && (
+                          <div className="relative h-32 w-full">
+                            <Image
+                              src={post.coverImage}
+                              alt={post.title}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Content */}
+                        <div className="p-4">
+                          <h4 className="font-semibold text-gray-900 text-sm mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                            {post.title}
+                          </h4>
+                          
+                          {/* Date */}
+                          <div className="flex justify-end">
+                            <span className="text-xs text-gray-500">
+                              {formatRelativeDate(post.createdAt)}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </Link>
