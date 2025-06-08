@@ -37,7 +37,7 @@ const Navbar = () => {
   return (
     <>
       {/* Main Navbar */}
-      <div className="relative bg-white shadow-md px-4 lg:px-8 z-50 border-b border-black">
+      <div className="relative bg-white shadow-sm px-4 lg:px-8 z-50 border-b border-zinc-300">
         <nav className="flex justify-between items-center max-w-8xl mx-auto py-4">
           {/* Logo */}
           <div className="logo">

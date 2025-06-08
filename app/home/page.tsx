@@ -88,7 +88,7 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Side - Categories (80%) */}
-          <div className="lg:w-4/5 lg:border-r lg:border-gray-300 lg:pr-8">
+          <div className="lg:w-4/5 lg:border-r lg:border-zinc-300 lg:pr-8">
             <div className="mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Categories</h2>
               <p className="text-gray-600 max-w-2xl">
