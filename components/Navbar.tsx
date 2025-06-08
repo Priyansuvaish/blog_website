@@ -23,15 +23,16 @@ const navigationLinks: NavLink[] = [
 
 const Navbar: React.FC<NavbarProps> = ({ onMobileMenuToggle }) => {
   // Get logo URL from environment variable
-  const logoUrl = process.env.NEXT_PUBLIC_LOGO_URL || "/earthfieldslogo.png";
+  const logoUrl = process.env.NEXT_PUBLIC_LOGO_URL || "/earthfieldslinklogo.png";
 
   return (
     <div className="relative bg-white shadow-md px-4 lg:px-8">
-      <nav className="flex justify-between items-center max-w-6xl mx-auto py-4">
+      <nav className="flex justify-between items-center max-w-8xl mx-auto py-4">
         {/* Logo */}
         <div className="logo">
-          <Link href="/">
+          <Link href="/" className="flex items-center ">
             <img src={logoUrl} alt="Logo" className="h-10 w-auto" />
+            <span className="text-[35px] font-bold text-[#009DFF]">Blogs</span>
           </Link>
         </div>
 

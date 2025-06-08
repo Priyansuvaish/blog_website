@@ -112,7 +112,7 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ onItemClick }) => {
 
   return (
     <div className="h-full overflow-y-auto">
-      <nav className="flex flex-col space-y-1 p-4 lg:mt-10">
+      <nav className="flex flex-col space-y-1 p-4 lg:mt-5">
         {menuItems.map((item) => (
           <div key={item.name} className="w-full">
             {item.type === 'link' ? (
