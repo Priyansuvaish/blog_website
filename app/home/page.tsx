@@ -11,9 +11,11 @@ interface Category {
     _id: string
     title: string
     slug: string
+    createdAt: string
   }>
   createdAt: string
   updatedAt: string
+  hasNewPosts: boolean
 }
 
 interface Post {
@@ -125,49 +127,31 @@ export default function HomePage() {
                 </div>
               </div>
             ) : (
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {categories.map((category) => (
                   <Link
                     key={category._id}
                     href={`/category/${encodeURIComponent(category.name)}`}
                     className="group"
                   >
-                    <div className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 h-full">
-                      <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                        </svg>
-                      </div>
-                      
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                        {category.name}
-                      </h3>
-                      
-                      <p className="text-gray-600 text-sm mb-4">
-                        {category.post_ids.length} {category.post_ids.length === 1 ? 'post' : 'posts'} available
-                      </p>
-                      
-                      {category.post_ids.length > 0 && (
-                        <div className="space-y-1">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Recent Posts:</p>
-                          {category.post_ids.slice(0, 2).map((post) => (
-                            <p key={post._id} className="text-xs text-gray-600 truncate">
-                              • {post.title}
-                            </p>
-                          ))}
-                          {category.post_ids.length > 2 && (
-                            <p className="text-xs text-blue-600 font-medium">
-                              +{category.post_ids.length - 2} more
-                            </p>
-                          )}
-                        </div>
+                    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 p-4 relative">
+                      {/* New post indicator */}
+                      {category.hasNewPosts && (
+                        <div className="absolute top-2 right-2 w-3 h-3 bg-[#009DFF] rounded-full animate-pulse"></div>
                       )}
                       
-                      <div className="mt-4 flex items-center text-blue-600 text-sm font-medium group-hover:text-blue-800">
-                        Explore posts
-                        <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                      <div className="flex items-center gap-3">
+                        {/* Icon */}
+                        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                          </svg>
+                        </div>
+                        
+                        {/* Category Name */}
+                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                          {category.name}
+                        </h3>
                       </div>
                     </div>
                   </Link>
