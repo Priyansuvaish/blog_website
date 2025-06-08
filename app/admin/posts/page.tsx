@@ -1,13 +1,49 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePosts, Post } from '@/hooks/usePosts'
+
+interface Post {
+  _id: string
+  title: string
+  slug: string
+  excerpt: string
+  category: string
+  readTime: string
+  content: string
+  coverImage?: string
+  createdAt: string
+  updatedAt: string
+}
 
 export default function AdminPosts() {
   const router = useRouter()
-  const { posts, isLoading, isError, deletePost } = usePosts()
+  const [posts, setPosts] = useState<Post[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchPosts()
+  }, [])
+
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/posts')
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts')
+      }
+      const data = await response.json()
+      setPosts(data)
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+      setError('Failed to load posts')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleDelete = async (postId: string) => {
     if (!confirm('Are you sure you want to delete this post?')) {
@@ -15,8 +51,18 @@ export default function AdminPosts() {
     }
 
     try {
-      await deletePost(postId)
+      const response = await fetch(`/api/posts/${postId}`, {
+        method: 'DELETE'
+      })
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete post')
+      }
+      
+      // Refresh posts list
+      await fetchPosts()
     } catch (error) {
+      console.error('Error deleting post:', error)
       alert('Failed to delete post. Please try again.')
     }
   }
@@ -38,7 +84,7 @@ export default function AdminPosts() {
     )
   }
 
-  if (isError) {
+  if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
@@ -126,7 +172,7 @@ export default function AdminPosts() {
                     </div>
                     <div className="flex gap-2 ml-4">
                       <button
-                        onClick={() => router.push(`/posts/${post._id}`)}
+                        onClick={() => router.push(`/post/${post.slug}`)}
                         className="px-3 py-1 text-green-600 hover:text-green-800"
                       >
                         View

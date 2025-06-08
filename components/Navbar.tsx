@@ -14,9 +14,9 @@ interface NavLink {
 }
 
 const navigationLinks: NavLink[] = [
+  { href: "/home", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
-  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -41,7 +41,7 @@ const Navbar = () => {
         <nav className="flex justify-between items-center max-w-7xl mx-auto py-4">
           {/* Logo */}
           <div className="logo">
-            <Link href="/" className="flex items-center p-2">
+            <Link href="/home" className="flex items-center p-2">
               <Image src={logoUrl} alt="Logo" width={190} height={10} className="object-contain" priority/>
               </Link>
           </div>
@@ -99,7 +99,7 @@ const Navbar = () => {
           {/* Mobile menu header */}
           <div className="flex justify-between items-center p-6 border-b border-gray-200">
             <div className="mobile-logo">
-              <Link href="/" onClick={handleLinkClick} className="flex items-center">
+              <Link href="/home" onClick={handleLinkClick} className="flex items-center">
                 <Image 
                   src={logoUrl} 
                   alt="Logo" 
