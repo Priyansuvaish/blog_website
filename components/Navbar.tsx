@@ -37,11 +37,11 @@ const Navbar = () => {
   return (
     <>
       {/* Main Navbar */}
-      <div className="relative bg-white shadow-md px-4 lg:px-8 z-50">
-        <nav className="flex justify-between items-center max-w-7xl mx-auto py-4">
+      <div className="relative bg-white shadow-md px-4 lg:px-8 z-50 border-b border-black">
+        <nav className="flex justify-between items-center max-w-8xl mx-auto py-4">
           {/* Logo */}
           <div className="logo">
-            <Link href="/home" className="flex items-center p-2">
+            <Link href="/home" className="flex items-center ">
               <Image src={logoUrl} alt="Logo" width={190} height={10} className="object-contain" priority/>
               </Link>
           </div>
