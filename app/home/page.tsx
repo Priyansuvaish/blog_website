@@ -174,7 +174,7 @@ export default function HomePage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {latestPosts.map((post) => (
+                  {latestPosts.slice(0, 5).map((post) => (
                     <Link
                       key={post._id}
                       href={`/post/${post.slug}`}
