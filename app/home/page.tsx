@@ -151,7 +151,7 @@ export default function HomePage() {
                     href={`/category/${encodeURIComponent(category.name)}`}
                     className="group"
                   >
-                    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 p-4 relative">
+                    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 p-4 relative">
                       {/* New post indicator */}
                       {category.hasNewPosts && (
                         <div className="absolute top-2 right-2 w-3 h-3 bg-[#009DFF] rounded-full animate-pulse"></div>
@@ -159,10 +159,10 @@ export default function HomePage() {
 
                       <div className="flex items-center gap-3">
                         {/* Icon */}
-                        <div className="flex-shrink-0 w-10 h-10 bg-[#009DFF] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <div className="flex-shrink-0 w-10 h-10 bg-white border-[1px] border-[#009DFF] rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                           <CategoryIcon
                             iconName={category.icon || "MdCategory"}
-                            className="w-5 h-5 text-white"
+                            className="w-5 h-5 text-[#009DFF]"
                           />
                         </div>
 
