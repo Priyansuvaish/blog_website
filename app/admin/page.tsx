@@ -41,6 +41,30 @@ export default function AdminDashboard() {
           <h2 className="text-xl font-semibold mb-2">Create New Post</h2>
           <p className="text-gray-600">Write and publish a new blog post</p>
         </Link>
+
+        <Link href="/admin/property-posts" className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow">
+          <div className="flex items-center mb-4">
+            <div className="bg-orange-100 p-3 rounded-full">
+              <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Manage Property Posts</h2>
+          <p className="text-gray-600">View, edit, and delete property blog posts</p>
+        </Link>
+
+        <Link href="/admin/create-property-post" className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow">
+          <div className="flex items-center mb-4">
+            <div className="bg-teal-100 p-3 rounded-full">
+              <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Create Property Post</h2>
+          <p className="text-gray-600">Create a new property blog post</p>
+        </Link>
       </div>
     </div>
   )
