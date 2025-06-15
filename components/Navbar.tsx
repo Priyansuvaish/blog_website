@@ -11,12 +11,18 @@ interface NavLink {
   href: string;
   label: string;
   isExternal?: boolean;
+  isHighlighted?: boolean; // New property for special highlighting
 }
 
 const navigationLinks: NavLink[] = [
   { href: "/home", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
+  { 
+    href: "https://www.earthfields.in/signup", 
+    label: "Exclusive Tools", 
+    isExternal: true,
+    isHighlighted: true // Special highlighted link
+  },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -44,6 +50,134 @@ const Navbar = () => {
 
   // Get logo URL from environment variable
   const logoUrl = process.env.NEXT_PUBLIC_LOGO_URL || "/EF_Journal_Logo.png";
+
+  // Function to render desktop navigation link
+  const renderDesktopLink = (link: NavLink, index: number) => {
+    const baseClasses = "group relative no-underline font-light text-base lg:text-lg rounded-xl transition-all duration-300 overflow-hidden";
+    
+    if (link.isHighlighted) {
+      // Elegant highlighted styling for Exclusive Tools
+      const highlightedClasses = `${baseClasses} text-[#009FFF] px-4 lg:px-6 py-2 lg:py-3 bg-[#009FFF]/5 border border-[#009FFF]/20 hover:bg-[#009FFF]/10 hover:border-[#009FFF]/30 hover:shadow-md hover:shadow-[#009FFF]/10 font-medium whitespace-nowrap flex items-center`;
+      
+      return link.isExternal ? (
+        <a 
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={highlightedClasses}
+        >
+          <span className="relative z-10 flex items-center gap-2 flex-nowrap whitespace-nowrap">
+            {link.label}
+            {/* Subtle badge */}
+            <span className="bg-[#009FFF] text-white text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0">
+              NEW
+            </span>
+          </span>
+          {/* Enhanced underline effect */}
+          <div className="absolute bottom-2 left-4 right-4 h-0.5 bg-[#009FFF] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        </a>
+      ) : (
+        <Link href={link.href} className={highlightedClasses}>
+          <span className="relative z-10 flex items-center gap-2 flex-nowrap whitespace-nowrap">
+            {link.label}
+            <span className="bg-[#009FFF] text-white text-xs px-2 py-0.5 rounded-full font-medium flex-shrink-0">
+              NEW
+            </span>
+          </span>
+          <div className="absolute bottom-2 left-4 right-4 h-0.5 bg-[#009FFF] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        </Link>
+      );
+    } else {
+      // Regular styling for other links
+      const regularClasses = `${baseClasses} text-gray-700 px-4 lg:px-6 py-2 lg:py-3 hover:text-[#009FFF] hover:bg-gray-50`;
+      
+      return link.isExternal ? (
+        <a 
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={regularClasses}
+        >
+          <span className="relative z-10">{link.label}</span>
+          <div className="absolute bottom-2 left-4 right-4 h-0.5 bg-[#009FFF] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        </a>
+      ) : (
+        <Link href={link.href} className={regularClasses}>
+          <span className="relative z-10">{link.label}</span>
+          <div className="absolute bottom-2 left-4 right-4 h-0.5 bg-[#009FFF] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+        </Link>
+      );
+    }
+  };
+
+  // Function to render mobile navigation link
+  const renderMobileLink = (link: NavLink, index: number) => {
+    if (link.isHighlighted) {
+      // Elegant mobile styling for Exclusive Tools
+      const highlightedMobileClasses = "group flex items-center justify-between text-[#009FFF] no-underline text-lg font-medium p-4 rounded-2xl transition-all duration-300 bg-[#009FFF]/5 border border-[#009FFF]/20 hover:bg-[#009FFF]/10 hover:border-[#009FFF]/30";
+      
+      return link.isExternal ? (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleLinkClick}
+          className={highlightedMobileClasses}
+        >
+          <span className="flex items-center gap-3">
+            {link.label}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs bg-[#009FFF] text-white px-2 py-1 rounded-full font-medium">NEW</span>
+            <div className="w-1.5 h-1.5 bg-[#009FFF] rounded-full transform scale-100 group-hover:scale-125 transition-transform duration-300"></div>
+          </div>
+        </a>
+      ) : (
+        <Link 
+          href={link.href} 
+          onClick={handleLinkClick}
+          className={highlightedMobileClasses}
+        >
+          <span className="flex items-center gap-3">
+            {link.label}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs bg-[#009FFF] text-white px-2 py-1 rounded-full font-medium">NEW</span>
+            <div className="w-1.5 h-1.5 bg-[#009FFF] rounded-full transform scale-100 group-hover:scale-125 transition-transform duration-300"></div>
+          </div>
+        </Link>
+      );
+    } else {
+      // Regular mobile styling
+      const regularMobileClasses = "group flex items-center justify-between text-gray-700 no-underline text-lg font-light p-4 rounded-2xl transition-all duration-300 hover:text-[#009FFF] hover:bg-[#009FFF]/5 hover:translate-x-2";
+      
+      return link.isExternal ? (
+        <a
+          href={link.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleLinkClick}
+          className={regularMobileClasses}
+        >
+          <span>{link.label}</span>
+          <div className="w-5 h-5 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 bg-[#009FFF] rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+          </div>
+        </a>
+      ) : (
+        <Link 
+          href={link.href} 
+          onClick={handleLinkClick}
+          className={regularMobileClasses}
+        >
+          <span>{link.label}</span>
+          <div className="w-5 h-5 flex items-center justify-center">
+            <div className="w-1.5 h-1.5 bg-[#009FFF] rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300"></div>
+          </div>
+        </Link>
+      );
+    }
+  };
 
   return (
     <>
@@ -93,30 +227,10 @@ const Navbar = () => {
 
             {/* Desktop navigation */}
             <nav className="hidden md:flex">
-              <ul className="flex list-none m-0 p-0 gap-2 lg:gap-4">
+              <ul className="flex list-none m-0 p-0 gap-2 lg:gap-4 items-center">
                 {navigationLinks.map((link, index) => (
                   <li key={index} className="m-0">
-                    {link.isExternal ? (
-                      <a 
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group relative text-gray-700 no-underline font-light text-base lg:text-lg px-4 lg:px-6 py-2 lg:py-3 rounded-xl transition-all duration-300 hover:text-[#009FFF] hover:bg-gray-50 overflow-hidden"
-                      >
-                        <span className="relative z-10">{link.label}</span>
-                        {/* Hover underline effect */}
-                        <div className="absolute bottom-2 left-4 right-4 h-0.5 bg-[#009FFF] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                      </a>
-                    ) : (
-                      <Link 
-                        href={link.href}
-                        className="group relative text-gray-700 no-underline font-light text-base lg:text-lg px-4 lg:px-6 py-2 lg:py-3 rounded-xl transition-all duration-300 hover:text-[#009FFF] hover:bg-gray-50 overflow-hidden"
-                      >
-                        <span className="relative z-10">{link.label}</span>
-                        {/* Hover underline effect */}
-                        <div className="absolute bottom-2 left-4 right-4 h-0.5 bg-[#009FFF] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                      </Link>
-                    )}
+                    {renderDesktopLink(link, index)}
                   </li>
                 ))}
               </ul>
@@ -167,44 +281,20 @@ const Navbar = () => {
         {/* Mobile menu navigation */}
         <div className="p-6 overflow-y-auto">
           <nav>
-            <ul className="list-none p-0 m-0 space-y-2">
+            <ul className="list-none p-0 m-0 space-y-3">
               {navigationLinks.map((link, index) => (
                 <li key={index} className="transform transition-all duration-300" style={{ transitionDelay: `${index * 100}ms` }}>
-                  {link.isExternal ? (
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={handleLinkClick}
-                      className="group flex items-center justify-between text-gray-700 no-underline text-lg font-light p-4 rounded-2xl transition-all duration-300 hover:text-[#009FFF] hover:bg-[#009FFF]/5 hover:translate-x-2"
-                    >
-                      <span>{link.label}</span>
-                      <div className="w-5 h-5 flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 bg-[#009FFF] rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300"></div>
-                      </div>
-                    </a>
-                  ) : (
-                    <Link 
-                      href={link.href} 
-                      onClick={handleLinkClick}
-                      className="group flex items-center justify-between text-gray-700 no-underline text-lg font-light p-4 rounded-2xl transition-all duration-300 hover:text-[#009FFF] hover:bg-[#009FFF]/5 hover:translate-x-2"
-                    >
-                      <span>{link.label}</span>
-                      <div className="w-5 h-5 flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 bg-[#009FFF] rounded-full transform scale-0 group-hover:scale-100 transition-transform duration-300"></div>
-                      </div>
-                    </Link>
-                  )}
+                  {renderMobileLink(link, index)}
                 </li>
               ))}
             </ul>
           </nav>
 
-          {/* Mobile menu footer */}
+          {/* Enhanced mobile menu footer */}
           <div className="mt-12 pt-8 border-t border-gray-100">
             <div className="text-center">
               <p className="text-sm text-gray-500 font-light mb-4">
-                Explore our latest content
+                Discover powerful property tools
               </p>
               <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#009FFF] to-transparent mx-auto"></div>
             </div>

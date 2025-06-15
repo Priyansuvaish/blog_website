@@ -14,6 +14,9 @@ if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env.local')
 }
 
+// Type assertion to ensure MONGODB_URI is a string after the check
+const mongoUri: string = MONGODB_URI
+
 let cached = (global.mongoose ??= { conn: null, promise: null })
 
 async function connectDB(): Promise<Connection> {
@@ -26,7 +29,7 @@ async function connectDB(): Promise<Connection> {
       bufferCommands: false,
     }
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(mongoUri, opts).then((mongoose) => {
       return mongoose.connection
     })
   }

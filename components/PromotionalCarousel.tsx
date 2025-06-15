@@ -193,6 +193,12 @@ const InfographicSlide = ({ slide }: { slide: InfographicSlide }) => {
             alt={slide.title}
             fill
             className="object-cover transition-transform duration-700 group-hover/image:scale-105"
+            onError={(e) => {
+              console.log('Image failed to load:', slide.image);
+              e.currentTarget.style.display = 'none';
+            }}
+            priority={false}
+            unoptimized={slide.image.includes('village_revenue')}
           />
           {/* Enhanced Gradient Overlay */}
           <div 
