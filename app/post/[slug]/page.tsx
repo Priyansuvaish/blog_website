@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { DotLoader } from 'react-spinners'
 
 interface Post {
   _id: string
@@ -63,13 +64,10 @@ export default function PostPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-16">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading post...</p>
-          </div>
-        </div>
+      <div className="container mx-auto px-4 py-16 flex items-center justify-center min-h-screen">
+      <DotLoader speedMultiplier={5} />
       </div>
+    </div>
     )
   }
 
