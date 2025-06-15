@@ -173,32 +173,93 @@ export default function HomePage() {
                   </div>
                 </div>
               ) : (
-                <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                  {categories.map((category) => (
+                <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                  {categories.map((category, index) => (
                     <Link
                       key={category._id}
                       href={`/category/${encodeURIComponent(category.name)}`}
                       className="group"
                     >
-                      <div className="relative bg-white border border-gray-100 rounded-2xl p-5 sm:p-6 hover:border-gray-200 hover:shadow-lg hover:shadow-gray-100/50 transition-all duration-300 hover:-translate-y-1 min-h-[80px] flex items-center">
-                        {/* New post indicator */}
+                      <div 
+                        className="relative bg-white rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-[#009FFF]/10 transition-all duration-700 hover:-translate-y-4 border border-gray-100 hover:border-[#009FFF]/20 h-[200px] flex flex-col"
+                        style={{ 
+                          animationDelay: `${index * 100}ms`,
+                          animation: 'fadeInUp 0.6s ease-out forwards'
+                        }}
+                      >
+                        {/* Background Pattern */}
+                        <div className="absolute top-0 right-0 w-20 h-20 opacity-5 group-hover:opacity-10 transition-opacity duration-500">
+                          <div className="w-full h-full bg-gradient-to-br from-[#009FFF] to-transparent rounded-bl-3xl"></div>
+                        </div>
+
+                        {/* New post indicator with animation */}
                         {category.hasNewPosts && (
-                          <div className="absolute top-3 sm:top-4 right-3 sm:right-4 w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                          <div className="absolute top-4 right-4 flex items-center gap-2">
+                            <div className="w-2.5 h-2.5 bg-[#009FFF] rounded-full animate-pulse"></div>
+                            <span className="text-xs bg-[#009FFF]/10 text-[#009FFF] px-2 py-1 rounded-full font-medium">
+                              New
+                            </span>
+                          </div>
                         )}
 
-                        <div className="flex items-center gap-3 sm:gap-4 w-full">
-                          {/* Icon */}
-                          <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gray-50 rounded-xl flex items-center justify-center group-hover:bg-blue-50 transition-colors duration-300">
-                            <CategoryIcon
-                              iconName={category.icon || "MdCategory"}
-                              className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 group-hover:text-blue-600 transition-colors duration-300"
-                            />
+                        {/* Main Content */}
+                        <div className="flex-1 p-6 flex flex-col">
+                          {/* Icon Container */}
+                          <div className="mb-4">
+                            <div className="relative">
+                              <div className="w-12 h-12 bg-gradient-to-br from-[#009FFF]/10 to-[#009FFF]/5 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-[#009FFF]/20 group-hover:to-[#009FFF]/10 transition-all duration-500">
+                                <CategoryIcon
+                                  iconName={category.icon || "MdCategory"}
+                                  className="w-6 h-6 text-[#009FFF] group-hover:scale-110 transition-transform duration-300"
+                                />
+                              </div>
+                              
+                              {/* Floating accent dots */}
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#009FFF]/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-pulse"></div>
+                              <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-[#009FFF]/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
+                            </div>
                           </div>
 
-                          {/* Category Name */}
-                          <h3 className="text-base sm:text-lg font-medium text-gray-900 group-hover:text-blue-900 transition-colors duration-300 truncate">
-                            {category.name}
-                          </h3>
+                          {/* Category Info */}
+                          <div className="flex-1 flex flex-col">
+                            <h3 className="text-lg font-light text-gray-900 group-hover:text-gray-700 transition-colors duration-300 mb-2 tracking-tight leading-6 line-clamp-2">
+                              {category.name}
+                            </h3>
+                            
+                            {/* Post count with enhanced styling */}
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="w-1.5 h-1.5 bg-[#009FFF] rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                              <span className="text-sm text-gray-600 font-light group-hover:text-[#009FFF] transition-colors duration-300">
+                                {category.post_ids?.length || 0} {(category.post_ids?.length || 0) === 1 ? 'article' : 'articles'}
+                              </span>
+                            </div>
+
+                            {/* Category description - truncated */}
+                            <p className="text-gray-500 text-sm font-light line-clamp-2 mb-auto opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+                              Explore insights and articles about {category.name.toLowerCase()}
+                            </p>
+                          </div>
+
+                          {/* Enhanced Footer */}
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-100 group-hover:border-[#009FFF]/20 transition-colors duration-300 mt-auto">
+                            <span className="text-xs text-gray-500 font-light">
+                              Browse Category
+                            </span>
+                            
+                            <div className="flex items-center text-gray-400 group-hover:text-[#009FFF] transition-all duration-300 group-hover:translate-x-1">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Sliding accent bar */}
+                        <div className="h-1 bg-gradient-to-r from-[#009FFF] to-[#007ACC] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+
+                        {/* Hover Border Effect */}
+                        <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                          <div className="absolute inset-0 rounded-3xl border-2 border-[#009FFF]/20"></div>
                         </div>
                       </div>
                     </Link>
@@ -306,14 +367,14 @@ export default function HomePage() {
                           </div>
 
                           {/* Title with Better Typography */}
-                          <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4 group-hover:text-gray-700 transition-colors duration-300 line-clamp-1 leading-7 sm:leading-8 tracking-tight truncate">
+                          <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4 group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 leading-7 sm:leading-8 tracking-tight">
                             {propertyPost.name}
                           </h3>
 
                           {/* Enhanced Excerpt */}
-                          {/* <p className="text-gray-600 mb-6 sm:mb-8 line-clamp-3 leading-relaxed font-light text-sm sm:text-base">
+                          <p className="text-gray-600 mb-6 sm:mb-8 line-clamp-3 leading-relaxed font-light text-sm sm:text-base">
                             {propertyPost.content.replace(/<[^>]*>/g, '').substring(0, 160)}...
-                          </p> */}
+                          </p>
 
                           {/* Enhanced Footer */}
                           <div className="flex justify-between items-center pt-4 sm:pt-6 border-t border-gray-100 group-hover:border-[#009FFF]/20 transition-colors duration-300">
