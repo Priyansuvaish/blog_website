@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import PropertyBlog from '@/models/PropertyBlog'
 import connectDB from '@/lib/mongodb'
+import mongoose from 'mongoose'
 
 export async function GET(
   request: Request,
@@ -8,7 +9,20 @@ export async function GET(
 ) {
   try {
     await connectDB()
-    const propertyPost = await PropertyBlog.findById(params.id).lean()
+    const { id } = params
+    
+    let propertyPost;
+    
+    // Check if the id is a valid MongoDB ObjectId
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      // Try finding by MongoDB _id first
+      propertyPost = await PropertyBlog.findById(id).lean()
+    }
+    
+    // If not found by id or id is not a valid ObjectId, try finding by slug
+    if (!propertyPost) {
+      propertyPost = await PropertyBlog.findOne({ slug: id }).lean()
+    }
 
     if (!propertyPost) {
       return NextResponse.json(

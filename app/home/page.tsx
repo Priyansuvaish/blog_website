@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import CategoryIcon from "@/components/CategoryIcon";
-import { DotLoader } from "react-spinners";
 import Loading from "@/components/Loading";
+import PromotionalCarousel from "@/components/PromotionalCarousel"; // Import the promotional component
 
 interface Category {
   _id: string;
@@ -134,6 +134,59 @@ export default function HomePage() {
         <div className="flex flex-col xl:flex-row gap-8 lg:gap-12 xl:gap-16">
           {/* Left Side - Main Content */}
           <div className="xl:w-3/4">
+            
+            {/* 🚀 PROMOTIONAL HERO SECTION - Above Categories */}
+            <div className="mb-16 sm:mb-20">
+              {/* Section Header */}
+              <div className="text-center mb-8 sm:mb-12">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#009FFF]/10 to-[#007ACC]/10 px-4 py-2 rounded-full mb-4">
+                  <div className="w-2 h-2 bg-[#009FFF] rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium text-[#009FFF]">Featured Platform Tools</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-3 tracking-tight">
+                  Experience Earthfields Platform
+                </h2>
+                <p className="text-base sm:text-lg text-gray-600 font-light max-w-2xl mx-auto">
+                  Discover our cutting-edge tools and insights that are revolutionizing the property industry
+                </p>
+              </div>
+
+              {/* Promotional Carousel Container */}
+              <div className="relative">
+                {/* Background Decorative Elements */}
+                <div className="absolute -inset-4 bg-gradient-to-br from-[#009FFF]/5 via-transparent to-[#007ACC]/5 rounded-3xl blur-xl"></div>
+                
+                {/* Main Promotional Content */}
+                <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-1 border border-gray-100/50 shadow-xl shadow-gray-200/20">
+                  <div className="bg-gradient-to-br from-gray-50/50 to-white rounded-3xl overflow-hidden">
+                    <PromotionalCarousel />
+                  </div>
+                </div>
+
+                {/* Floating Accent Elements */}
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-gradient-to-br from-[#009FFF] to-[#007ACC] rounded-full opacity-60 animate-pulse"></div>
+                <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-gradient-to-br from-[#007ACC] to-[#009FFF] rounded-full opacity-40 animate-pulse delay-1000"></div>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className="flex items-center justify-center gap-8 mt-8 text-sm text-gray-500">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Trusted by 10,000+ Users</span>
+                </div>
+                <div className="hidden sm:block h-4 w-px bg-gray-300"></div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>Industry Leading Analytics</span>
+                </div>
+                <div className="hidden sm:block h-4 w-px bg-gray-300"></div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>24/7 Expert Support</span>
+                </div>
+              </div>
+            </div>
+
             {/* Categories Section */}
             <div className="mb-16 sm:mb-20">
               <div className="mb-8 sm:mb-12">
@@ -369,11 +422,6 @@ export default function HomePage() {
                           <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4 group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 leading-7 sm:leading-8 tracking-tight">
                             {propertyPost.name}
                           </h3>
-
-                          {/* Enhanced Excerpt */}
-                          <p className="text-gray-600 mb-6 sm:mb-8 line-clamp-3 leading-relaxed font-light text-sm sm:text-base">
-                            {propertyPost.content.replace(/<[^>]*>/g, '').substring(0, 160)}...
-                          </p>
 
                           {/* Enhanced Footer */}
                           <div className="flex justify-between items-center pt-4 sm:pt-6 border-t border-gray-100 group-hover:border-[#009FFF]/20 transition-colors duration-300">
