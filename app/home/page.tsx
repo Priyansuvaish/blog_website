@@ -258,7 +258,7 @@ export default function HomePage() {
                       href={`/property-post/${propertyPost.slug}`}
                       className="group"
                     >
-                      <article className="bg-white rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-gray-200/60 transition-all duration-700 hover:-translate-y-3 border border-gray-50 hover:border-gray-100">
+                      <article className="relative bg-white rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-[#009FFF]/10 transition-all duration-700 hover:-translate-y-4 border border-gray-100 hover:border-[#009FFF]/20">
                         {/* Hero Image */}
                         {propertyPost.hero_image && (
                           <div className="relative h-48 sm:h-56 md:h-64 w-full overflow-hidden">
@@ -268,44 +268,76 @@ export default function HomePage() {
                               fill
                               className="object-cover group-hover:scale-110 transition-transform duration-1000"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             
-                            {/* Floating Badge */}
-                            <div className="absolute top-4 sm:top-6 right-4 sm:right-6">
-                              <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-medium shadow-lg">
+                            {/* Dynamic Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            
+                            {/* Floating Badge with Animation */}
+                            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 transform group-hover:scale-110 transition-transform duration-300">
+                              <span className="bg-white/95 backdrop-blur-sm text-gray-800 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-medium shadow-lg border border-white/20">
                                 Featured Property
                               </span>
+                            </div>
+
+                            {/* Sliding Info Panel */}
+                            <div className="absolute bottom-0 left-0 right-0 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black/90 to-transparent p-4 sm:p-6">
+                              <div className="text-white">
+                                <p className="text-xs sm:text-sm text-white/80 mb-1">Quick Preview</p>
+                                <p className="text-sm sm:text-base font-medium line-clamp-2">
+                                  {propertyPost.content.replace(/<[^>]*>/g, '').substring(0, 80)}...
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Corner Accent */}
+                            <div className="absolute top-0 left-0 w-0 h-0 group-hover:w-16 group-hover:h-16 transition-all duration-500">
+                              <div className="w-full h-full bg-gradient-to-br from-[#009FFF] to-transparent opacity-20"></div>
                             </div>
                           </div>
                         )}
 
-                        {/* Content */}
+                        {/* Content Section */}
                         <div className="p-6 sm:p-8">
-                          {/* Title */}
-                          <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-3 group-hover:text-gray-700 transition-colors duration-300 line-clamp-2 leading-7 sm:leading-8 tracking-tight">
+                          {/* Category Tag */}
+                          <div className="mb-4">
+                            <span className="inline-block bg-[#009FFF]/5 text-[#009FFF] px-3 py-1 rounded-full text-xs font-medium border border-[#009FFF]/10">
+                              Property Listing
+                            </span>
+                          </div>
+
+                          {/* Title with Better Typography */}
+                          <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4 group-hover:text-gray-700 transition-colors duration-300 line-clamp-1 leading-7 sm:leading-8 tracking-tight truncate">
                             {propertyPost.name}
                           </h3>
 
-                          {/* Excerpt */}
-                          <p className="text-gray-600 mb-6 sm:mb-8 line-clamp-3 leading-relaxed font-light text-sm sm:text-base">
+                          {/* Enhanced Excerpt */}
+                          {/* <p className="text-gray-600 mb-6 sm:mb-8 line-clamp-3 leading-relaxed font-light text-sm sm:text-base">
                             {propertyPost.content.replace(/<[^>]*>/g, '').substring(0, 160)}...
-                          </p>
+                          </p> */}
 
-                          {/* Footer */}
-                          <div className="flex justify-between items-center pt-4 sm:pt-6 border-t border-gray-100">
+                          {/* Enhanced Footer */}
+                          <div className="flex justify-between items-center pt-4 sm:pt-6 border-t border-gray-100 group-hover:border-[#009FFF]/20 transition-colors duration-300">
                             <div className="flex items-center gap-2">
-                              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                              <span className="text-sm text-gray-600 font-light">
+                              <div className="w-2 h-2 bg-[#009FFF] rounded-full group-hover:scale-125 transition-transform duration-300"></div>
+                              <span className="text-sm text-gray-600 font-light group-hover:text-[#009FFF] transition-colors duration-300">
                                 {formatRelativeDate(propertyPost.createdAt)}
                               </span>
                             </div>
                             
-                            <div className="flex items-center text-gray-400 group-hover:text-blue-500 transition-colors duration-300">
+                            <div className="flex items-center gap-2 text-gray-400 group-hover:text-[#009FFF] transition-all duration-300 group-hover:translate-x-1">
+                              <span className="text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                View Details
+                              </span>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                               </svg>
                             </div>
                           </div>
+                        </div>
+
+                        {/* Hover Border Effect */}
+                        <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                          <div className="absolute inset-0 rounded-3xl border-2 border-[#009FFF]/20"></div>
                         </div>
                       </article>
                     </Link>
