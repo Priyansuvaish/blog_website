@@ -108,9 +108,9 @@ export default function HomePage() {
   if (isLoading) {
     return (
       <Loading 
-        variant="spinner" 
+        variant="dots" 
         size="xl" 
-        text="Welcome to your property hub" 
+        text="Welcome to Earthfields Journal" 
         fullScreen={true} 
       />
     );
