@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     
     let query = Post.find()
       .sort(sortObject)
-      .select('title slug excerpt category coverImage createdAt updatedAt readTime')
+      .select('title slug content excerpt category coverImage createdAt updatedAt readTime')
       .lean()
     
     // Apply limit if specified

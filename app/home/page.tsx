@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import CategoryIcon from "@/components/CategoryIcon";
 import { DotLoader } from "react-spinners";
+import Loading from "@/components/Loading";
 
 interface Category {
   _id: string;
@@ -106,14 +107,12 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <DotLoader color="#009FFF" size={40} speedMultiplier={1.2} />
-            <p className="mt-4 text-sm text-gray-600 font-light">Loading content...</p>
-          </div>
-        </div>
-      </div>
+      <Loading 
+        variant="spinner" 
+        size="xl" 
+        text="Welcome to your property hub" 
+        fullScreen={true} 
+      />
     );
   }
 

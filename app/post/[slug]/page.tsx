@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { DotLoader } from 'react-spinners'
+import Loading from '@/components/Loading'
 
 interface Post {
   _id: string
@@ -100,14 +101,12 @@ export default function PostPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <DotLoader color="#009FFF" size={40} speedMultiplier={1.2} />
-            <p className="mt-4 text-sm text-gray-600 font-light">Loading article...</p>
-          </div>
-        </div>
-      </div>
+      <Loading 
+        variant="spinner" 
+        size="lg" 
+        text="Loading article" 
+        fullScreen={true} 
+      />
     )
   }
 
@@ -290,11 +289,11 @@ export default function PostPage() {
           </div>
 
           {/* Excerpt */}
-          <div className="bg-gradient-to-r from-gray-50 to-[#009FFF]/5 p-6 sm:p-8 rounded-3xl border border-gray-100">
+          {/* <div className="bg-gradient-to-r from-gray-50 to-[#009FFF]/5 p-6 sm:p-8 rounded-3xl border border-gray-100">
             <p className="text-lg sm:text-xl text-gray-700 leading-relaxed font-light italic">
               {post.excerpt}
             </p>
-          </div>
+          </div> */}
         </div>
 
         {/* Cover Image */}
@@ -314,8 +313,76 @@ export default function PostPage() {
 
         {/* Article Content */}
         <article className="mb-16 sm:mb-20">
-          <div className="prose prose-lg sm:prose-xl max-w-none prose-headings:font-light prose-headings:text-gray-900 prose-headings:tracking-tight prose-p:text-gray-700 prose-p:leading-relaxed prose-p:font-light prose-a:text-[#009FFF] prose-a:no-underline hover:prose-a:text-[#007ACC] prose-strong:text-gray-900 prose-strong:font-medium prose-blockquote:border-l-[#009FFF] prose-blockquote:bg-[#009FFF]/5 prose-blockquote:rounded-r-2xl prose-blockquote:p-6">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+          {/* Content Separator */}
+          <div className="flex items-center gap-4 mb-8 sm:mb-12">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-full">
+              <div className="w-2 h-2 bg-[#009FFF] rounded-full"></div>
+              <span className="text-sm text-gray-600 font-light">Article Content</span>
+              <div className="w-2 h-2 bg-[#009FFF] rounded-full"></div>
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+          </div>
+
+          {/* Main Content */}
+          <div className="prose prose-lg sm:prose-xl max-w-none 
+            prose-headings:font-light prose-headings:text-gray-900 prose-headings:tracking-tight prose-headings:mb-6 prose-headings:mt-8
+            prose-h1:text-3xl prose-h1:sm:text-4xl prose-h1:mb-8 prose-h1:mt-12
+            prose-h2:text-2xl prose-h2:sm:text-3xl prose-h2:mb-6 prose-h2:mt-10
+            prose-h3:text-xl prose-h3:sm:text-2xl prose-h3:mb-4 prose-h3:mt-8
+            prose-p:text-gray-700 prose-p:leading-relaxed prose-p:font-light prose-p:mb-6 prose-p:text-base prose-p:sm:text-lg
+            prose-a:text-[#009FFF] prose-a:no-underline prose-a:font-medium hover:prose-a:text-[#007ACC] hover:prose-a:underline prose-a:transition-colors prose-a:duration-300
+            prose-strong:text-gray-900 prose-strong:font-medium
+            prose-em:text-gray-600 prose-em:italic
+            prose-blockquote:border-l-4 prose-blockquote:border-l-[#009FFF] prose-blockquote:bg-[#009FFF]/5 prose-blockquote:rounded-r-2xl prose-blockquote:p-6 prose-blockquote:my-8 prose-blockquote:not-italic
+            prose-ul:my-6 prose-ul:space-y-2 prose-li:text-gray-700 prose-li:leading-relaxed
+            prose-ol:my-6 prose-ol:space-y-2
+            prose-img:rounded-2xl prose-img:shadow-lg prose-img:my-8
+            prose-hr:border-gray-200 prose-hr:my-12
+            prose-table:my-8 prose-table:rounded-lg prose-table:overflow-hidden prose-table:shadow-sm
+            prose-th:bg-gray-50 prose-th:text-gray-900 prose-th:font-medium prose-th:p-4
+            prose-td:p-4 prose-td:border-t prose-td:border-gray-200">
+            
+            {post.content && post.content.trim() ? (
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            ) : (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-light text-gray-900 mb-2">Content Coming Soon</h3>
+                <p className="text-gray-500 font-light">The full article content is being prepared and will be available shortly.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Content Footer - Reading Stats */}
+          <div className="mt-12 pt-8 border-t border-gray-100">
+            <div className="flex items-center justify-center gap-8 text-sm text-gray-500">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{post.readTime} read</span>
+              </div>
+              <div className="w-px h-4 bg-gray-300"></div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span>{Math.round(scrollProgress)}% completed</span>
+              </div>
+              <div className="w-px h-4 bg-gray-300"></div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4M8 7l4 4m0 0l4-4m-4 4V3M4 21h16" />
+                </svg>
+                <span>Published {new Date(post.createdAt).toLocaleDateString()}</span>
+              </div>
+            </div>
           </div>
         </article>
 

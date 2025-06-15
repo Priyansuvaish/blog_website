@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { DotLoader } from 'react-spinners'
+import Loading from '@/components/Loading'
 
 interface Post {
   _id: string
@@ -67,14 +68,13 @@ export default function CategoryPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <DotLoader color="#009FFF" size={40} speedMultiplier={1.2} />
-            <p className="mt-4 text-sm text-gray-600 font-light">Loading {categoryName} posts...</p>
-          </div>
-        </div>
-      </div>
+      <Loading 
+        variant="spinner" 
+        size="lg" 
+        text="Loading category content" 
+        fullScreen={true} 
+      />
+
     )
   }
 
