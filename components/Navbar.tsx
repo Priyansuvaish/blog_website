@@ -17,12 +17,12 @@ interface NavLink {
 const navigationLinks: NavLink[] = [
   { href: "/home", label: "Home" },
   { href: "/about", label: "About" },
-  { 
-    href: "https://www.earthfields.in/signup", 
-    label: "Exclusive Tools", 
-    isExternal: true,
-    isHighlighted: true // Special highlighted link
-  },
+  // { 
+  //   href: "https://www.earthfields.in/signup", 
+  //   label: "Exclusive Tools", 
+  //   isExternal: true,
+  //   isHighlighted: true // Special highlighted link
+  // },
   { href: "/contact", label: "Contact" },
 ];
 
