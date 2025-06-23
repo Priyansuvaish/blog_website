@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import CategoryIcon from "@/components/CategoryIcon";
 import Loading from "@/components/Loading";
-import PromotionalCarousel from "@/components/PromotionalCarousel"; // Import the promotional component
+import PromotionalCarousel from "@/components/PromotionalCarousel";
 
 interface Category {
   _id: string;
@@ -138,7 +138,7 @@ export default function HomePage() {
             {/* 🚀 PROMOTIONAL HERO SECTION - Above Categories */}
             <div className="mb-16 sm:mb-20">
               {/* Section Header */}
-              <div className="text-center mb-8 sm:mb-12">
+              {/* <div className="text-center mb-8 sm:mb-12">
                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#009FFF]/10 to-[#007ACC]/10 px-4 py-2 rounded-full mb-4">
                   <div className="w-2 h-2 bg-[#009FFF] rounded-full animate-pulse"></div>
                   <span className="text-sm font-medium text-[#009FFF]">Featured Platform Tools</span>
@@ -149,7 +149,7 @@ export default function HomePage() {
                 <p className="text-base sm:text-lg text-gray-600 font-light max-w-2xl mx-auto">
                   Discover our cutting-edge tools and insights that are revolutionizing the property industry
                 </p>
-              </div>
+              </div> */}
 
               {/* Promotional Carousel Container */}
               <div className="relative">
@@ -157,10 +157,9 @@ export default function HomePage() {
                 <div className="absolute -inset-4 bg-gradient-to-br from-[#009FFF]/5 via-transparent to-[#007ACC]/5 rounded-3xl blur-xl"></div>
                 
                 {/* Main Promotional Content */}
-                <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-1 border border-gray-100/50 shadow-xl shadow-gray-200/20">
-                  <div className="bg-gradient-to-br from-gray-50/50 to-white rounded-3xl overflow-hidden">
-                    <PromotionalCarousel />
-                  </div>
+                <div className="relative bg-gradient-to-br from-white via-[#009FFF]/5 to-[#007ACC]/10 rounded-3xl overflow-hidden border border-[#009FFF]/10 shadow-2xl shadow-[#009FFF]/5">
+                  {/* Promotional Carousel */}
+                  <PromotionalCarousel />
                 </div>
 
                 {/* Floating Accent Elements */}
@@ -168,23 +167,7 @@ export default function HomePage() {
                 <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-gradient-to-br from-[#007ACC] to-[#009FFF] rounded-full opacity-40 animate-pulse delay-1000"></div>
               </div>
 
-              {/* Trust Indicators */}
-              <div className="flex items-center justify-center gap-8 mt-8 text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Trusted by 10,000+ Users</span>
-                </div>
-                <div className="hidden sm:block h-4 w-px bg-gray-300"></div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>Industry Leading Analytics</span>
-                </div>
-                <div className="hidden sm:block h-4 w-px bg-gray-300"></div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span>24/7 Expert Support</span>
-                </div>
-              </div>
+              
             </div>
 
             {/* Categories Section */}
