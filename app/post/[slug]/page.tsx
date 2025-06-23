@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { DotLoader } from 'react-spinners'
 import Loading from '@/components/Loading'
+import CommentSection from "@/components/CommentSection"
 
 interface Post {
   _id: string
@@ -462,6 +463,9 @@ export default function PostPage() {
             </div>
           </section>
         )}
+
+        {/* Comments Section */}
+        <CommentSection postId={post._id} />
       </div>
 
       {/* Custom CSS for animations */}

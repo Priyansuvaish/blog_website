@@ -25,7 +25,7 @@ export interface Comment {
   _id: Types.ObjectId
   content: string
   post: Types.ObjectId
-  author: User
+  username: string
   createdAt: Date
   updatedAt: Date
 } 

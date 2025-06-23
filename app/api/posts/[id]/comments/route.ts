@@ -28,12 +28,28 @@ export async function POST(
 ) {
   try {
     const body = await request.json()
-    const { content } = body
+    const { content, username } = body
+
+    // Validation
+    if (!content?.trim()) {
+      return NextResponse.json(
+        { error: 'Comment content is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!username?.trim()) {
+      return NextResponse.json(
+        { error: 'Username is required' },
+        { status: 400 }
+      )
+    }
 
     await connectDB()
     const comment = await Comment.create({
-      content,
+      content: content.trim(),
       post: params.id,
+      username: username.trim(),
       createdAt: new Date(),
       updatedAt: new Date()
     })
