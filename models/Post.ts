@@ -17,7 +17,7 @@ const postSchema = new mongoose.Schema({
     unique: true
   },
   content: { type: String, required: true },
-  excerpt: { type: String, required: true },
+  metadata: { type: String, required: true }, // Renamed from excerpt - used for SEO meta description
   category: { type: String, required: true },
   readTime: { type: String, required: true },
   coverImage: { type: String }, // URL for cover image

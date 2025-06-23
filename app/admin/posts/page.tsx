@@ -9,7 +9,7 @@ interface Post {
   _id: string
   title: string
   slug: string
-  excerpt: string
+  metadata: string // Renamed from excerpt - used for SEO meta description
   category: string
   readTime: string
   content: string
@@ -161,7 +161,7 @@ export default function AdminPosts() {
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
-                      <p className="text-gray-600 mb-4 line-clamp-2">{post.excerpt}</p>
+                      <p className="text-gray-600 mb-4 line-clamp-2">{post.metadata}</p>
                       <div className="flex gap-4 text-sm text-gray-500">
                         <span>Category: {post.category}</span>
                         <span>Read time: {post.readTime}</span>

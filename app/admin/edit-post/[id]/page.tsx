@@ -8,7 +8,7 @@ interface Post {
   _id: string
   title: string
   content: string
-  excerpt: string
+  metadata: string // Renamed from excerpt - used for SEO meta description
   category: string
   readTime: string
   coverImage?: string

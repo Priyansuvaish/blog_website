@@ -6,6 +6,7 @@ import Image from "next/image";
 import CategoryIcon from "@/components/CategoryIcon";
 import Loading from "@/components/Loading";
 import PromotionalCarousel from "@/components/PromotionalCarousel";
+import { Metadata } from 'next'
 
 interface Category {
   _id: string;
@@ -26,7 +27,7 @@ interface Post {
   _id: string;
   title: string;
   slug: string;
-  excerpt: string;
+  metadata: string; // Renamed from excerpt - used for SEO meta description
   createdAt: string;
   category: string;
   coverImage?: string;

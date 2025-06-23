@@ -1,0 +1,26 @@
+# Robots.txt for Earthfields Blog
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://blog.earthfields.in/sitemap.xml
+
+# RSS Feed
+# RSS: https://blog.earthfields.in/feed.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Disallow admin and API routes from being indexed
+Disallow: /admin/
+Disallow: /api/
+
+# Allow important pages
+Allow: /post/
+Allow: /category/
+Allow: /property/
+Allow: /property-post/
+Allow: /about/
+Allow: /home/ 

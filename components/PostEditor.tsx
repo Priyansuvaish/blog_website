@@ -15,7 +15,7 @@ interface PostEditorProps {
     _id: string
     title: string
     content: string
-    excerpt: string
+    metadata: string // Renamed from excerpt - used for SEO meta description
     category: string
     readTime: string
     coverImage?: string
@@ -26,7 +26,7 @@ export default function PostEditor({ post }: PostEditorProps) {
   const router = useRouter()
   const [title, setTitle] = useState(post?.title || '')
   const [content, setContent] = useState(post?.content || '')
-  const [excerpt, setExcerpt] = useState(post?.excerpt || '')
+  const [metadata, setMetadata] = useState(post?.metadata || '')
   const [category, setCategory] = useState(post?.category || '')
   const [categories, setCategories] = useState<{_id: string, name: string}[]>([])
   const [readTime, setReadTime] = useState(post?.readTime || '')
@@ -113,7 +113,7 @@ export default function PostEditor({ post }: PostEditorProps) {
           ...(post && { id: post._id }),
           title,
           content,
-          excerpt,
+          metadata,
           category,
           readTime,
           coverImage,
@@ -208,17 +208,21 @@ export default function PostEditor({ post }: PostEditorProps) {
       </div>
 
       <div>
-        <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700">
-          Excerpt
+        <label htmlFor="metadata" className="block text-sm font-medium text-gray-700">
+          SEO Meta Description
         </label>
         <textarea
-          id="excerpt"
-          value={excerpt}
-          onChange={(e) => setExcerpt(e.target.value)}
+          id="metadata"
+          value={metadata}
+          onChange={(e) => setMetadata(e.target.value)}
           rows={3}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          placeholder="Brief description for search engines and social media sharing..."
           required
         />
+        <p className="mt-1 text-sm text-gray-500">
+          This will be used as the meta description for SEO and social media previews. Keep it under 160 characters.
+        </p>
       </div>
 
       <div>

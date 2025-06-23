@@ -6,8 +6,91 @@ import Navbar from '../components/Navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Blog Website',
-  description: 'A modern blog website',
+  title: {
+    default: 'Earthfields Blog - Land Insights, Property News & Expert Analysis',
+    template: '%s | Earthfields Blog'
+  },
+  description: 'Discover expert insights on land transactions, property market trends, and real estate analysis from India\'s first exclusive land platform - Earthfields.',
+  keywords: ['land transactions', 'property blog', 'real estate insights', 'land market', 'property investment', 'Earthfields', 'land platform', 'property news'],
+  authors: [{ name: 'Earthfields Team' }],
+  creator: 'Earthfields',
+  publisher: 'Earthfields',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://blog.earthfields.in'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    url: 'https://blog.earthfields.in',
+    title: 'Earthfields Blog - Land Insights, Property News & Expert Analysis',
+    description: 'Discover expert insights on land transactions, property market trends, and real estate analysis from India\'s first exclusive land platform - Earthfields.',
+    siteName: 'Earthfields Blog',
+    images: [
+      {
+        url: '/EF_Journal_Logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Earthfields Blog - Land Insights & Property News',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Earthfields Blog - Land Insights, Property News & Expert Analysis',
+    description: 'Discover expert insights on land transactions, property market trends, and real estate analysis from India\'s first exclusive land platform.',
+    images: ['/EF_Journal_Logo.png'],
+    creator: '@earthfields',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'your-google-verification-code', // Replace with actual verification code
+  },
+}
+
+// JSON-LD structured data
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: 'Earthfields Blog',
+  description: 'Expert insights on land transactions, property market trends, and real estate analysis from India\'s first exclusive land platform.',
+  url: 'https://blog.earthfields.in',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Earthfields',
+    url: 'https://www.earthfields.in',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://blog.earthfields.in/EF_Journal_Logo.png',
+      width: 400,
+      height: 400,
+    },
+    sameAs: [
+      'https://www.earthfields.in',
+    ],
+  },
+  inLanguage: 'en-IN',
+  about: {
+    '@type': 'Thing',
+    name: 'Land Transactions',
+    description: 'Information and insights about land transactions, property investment, and real estate market trends in India.',
+  },
+  keywords: 'land transactions, property blog, real estate insights, land market, property investment, Earthfields',
 }
 
 export default function RootLayout({
@@ -17,6 +100,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/EF_Journal_Logo.png" />
+        <link rel="alternate" type="application/rss+xml" title="Earthfields Blog RSS Feed" href="/feed.xml" />
+        <meta name="theme-color" content="#009FFF" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={inter.className}>
         <Navbar />
         <main className="min-h-screen bg-gray-50">

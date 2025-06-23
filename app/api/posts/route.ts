@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     
     let query = Post.find()
       .sort(sortObject)
-      .select('title slug content excerpt category coverImage createdAt updatedAt readTime')
+      .select('title slug content metadata category coverImage createdAt updatedAt readTime')
       .lean()
     
     // Apply limit if specified
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { title, content, excerpt, category, readTime, coverImage } = body
+    const { title, content, metadata, category, readTime, coverImage } = body
 
     await connectDB()
     
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     const post = await Post.create({
       title,
       content,
-      excerpt,
+      metadata,
       category,
       readTime,
       coverImage,
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json()
-    const { id, title, content, excerpt, category, readTime, coverImage } = body
+    const { id, title, content, metadata, category, readTime, coverImage } = body
 
     await connectDB()
     
@@ -109,7 +109,7 @@ export async function PUT(request: Request) {
     // Update the post fields
     post.title = title
     post.content = content
-    post.excerpt = excerpt
+    post.metadata = metadata
     post.category = category
     post.readTime = readTime
     post.coverImage = coverImage
