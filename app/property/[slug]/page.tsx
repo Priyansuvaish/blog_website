@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import ShareButton from '@/components/ShareButton'
 
 interface PropertyPost {
   _id: string
@@ -195,6 +196,15 @@ export default function PropertyPage() {
                   </span>
                 </div>
               )}
+            </div>
+
+            {/* Share Button */}
+            <div className="flex justify-end mb-8">
+              <ShareButton 
+                title={propertyPost.name}
+                url={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://blog.earthfields.in'}/property/${propertyPost.slug}`}
+                description={`Discover ${propertyPost.name} - Explore this featured property listing with detailed insights, images, and expert analysis from Earthfields.`}
+              />
             </div>
 
             {/* Sub Images Gallery */}
