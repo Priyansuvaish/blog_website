@@ -23,7 +23,7 @@ const navigationLinks: NavLink[] = [
   //   isExternal: true,
   //   isHighlighted: true // Special highlighted link
   // },
-  { href: "/contact", label: "Contact" },
+  { href: "https://earthfields.in/contact", label: "Contact" },
 ];
 
 const Navbar = () => {
