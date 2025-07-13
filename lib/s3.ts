@@ -23,8 +23,8 @@ export const generatePresignedUrl = async (key: string): Promise<string> => {
   return await getSignedUrl(s3Client, command, { expiresIn: 604800 }) // 7 days in seconds
 }
 
-// Upload file and return presigned URL
-export const uploadFileAndGetPresignedUrl = async (
+// Upload file and return S3 key
+export const uploadFileToS3 = async (
   file: Buffer,
   fileName: string,
   contentType: string
@@ -39,8 +39,8 @@ export const uploadFileAndGetPresignedUrl = async (
 
   await s3Client.send(uploadCommand)
 
-  // Generate presigned URL for viewing
-  return await generatePresignedUrl(fileName)
+  // Return the S3 key instead of presigned URL
+  return fileName
 }
 
 // Delete file from S3
@@ -51,23 +51,4 @@ export const deleteFileFromS3 = async (key: string): Promise<void> => {
   })
 
   await s3Client.send(deleteCommand)
-}
-
-// Extract S3 key from presigned URL
-export const extractKeyFromPresignedUrl = (url: string): string | null => {
-  try {
-    const urlObj = new URL(url)
-    const pathname = urlObj.pathname
-    // Remove leading slash and decode
-    return decodeURIComponent(pathname.substring(1))
-  } catch (error) {
-    console.error('Error extracting key from URL:', error)
-    return null
-  }
-}
-
-// Check if URL is our presigned URL (for blog images or cover images)
-export const isOurPresignedUrl = (url: string): boolean => {
-  return url.includes(BUCKET_NAME) && url.includes('amazonaws.com') && 
-         (url.includes('blog-images/') || url.includes('cover-images/'))
 } 

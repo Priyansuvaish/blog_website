@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import SafeImage from "@/components/SafeImage";
 import CategoryIcon from "@/components/CategoryIcon";
 import Loading from "@/components/Loading";
 import PromotionalCarousel from "@/components/PromotionalCarousel";
@@ -359,8 +359,8 @@ export default function HomePage() {
                         {/* Hero Image */}
                         {propertyPost.hero_image && (
                           <div className="relative h-48 sm:h-56 md:h-64 w-full overflow-hidden">
-                            <Image
-                              src={propertyPost.hero_image}
+                            <SafeImage
+                              s3Key={propertyPost.hero_image}
                               alt={propertyPost.name}
                               fill
                               className="object-cover group-hover:scale-110 transition-transform duration-1000"
@@ -517,8 +517,8 @@ export default function HomePage() {
                         {post.coverImage && (
                           <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-95 transition-all duration-500 transform translate-y-full group-hover:translate-y-0">
                             <div className="relative w-full h-full">
-                              <Image
-                                src={post.coverImage}
+                              <SafeImage
+                                s3Key={post.coverImage}
                                 alt={post.title}
                                 fill
                                 className="object-cover"

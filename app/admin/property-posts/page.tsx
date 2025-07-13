@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import SafeImage from '@/components/SafeImage'
 
 interface PropertyPost {
   _id: string
@@ -128,8 +128,8 @@ export default function AdminPropertyPosts() {
                 {/* Hero Image */}
                 <div className="w-48 h-32 flex-shrink-0 relative bg-gray-100">
                   {propertyPost.hero_image ? (
-                    <Image
-                      src={propertyPost.hero_image}
+                    <SafeImage
+                      s3Key={propertyPost.hero_image}
                       alt={propertyPost.name}
                       fill
                       className="object-cover"

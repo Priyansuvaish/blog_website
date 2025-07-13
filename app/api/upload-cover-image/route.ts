@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
-import { uploadFileAndGetPresignedUrl } from '@/lib/s3'
+import { uploadFileToS3 } from '@/lib/s3'
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,15 +41,15 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    // Upload file and get presigned URL
-    const presignedUrl = await uploadFileAndGetPresignedUrl(
+    // Upload file and get S3 key
+    const s3Key = await uploadFileToS3(
       buffer,
       fileName,
       file.type
     )
 
     return NextResponse.json({
-      url: presignedUrl,
+      key: s3Key,
       uploaded: 1,
       type: 'cover'
     })

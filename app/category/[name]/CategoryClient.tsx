@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import Loading from '@/components/Loading'
+import SafeImage from '@/components/SafeImage'
 
 interface Post {
   _id: string
@@ -189,8 +189,8 @@ export default function CategoryClient({ params }: { params: { name: string } })
                   {/* Post Image */}
                   {post.coverImage && (
                     <div className="relative h-48 sm:h-56 w-full overflow-hidden">
-                      <Image
-                        src={post.coverImage}
+                      <SafeImage
+                        s3Key={post.coverImage}
                         alt={post.title}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-1000"

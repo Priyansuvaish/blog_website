@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import Loading from "@/components/Loading";
 import ShareButton from "@/components/ShareButton";
+import SafeImage from "@/components/SafeImage";
 
 interface PropertyBlog {
   _id: string;
@@ -18,31 +18,15 @@ interface PropertyBlog {
   updatedAt: string;
 }
 
-// Function to format relative date
-const formatRelativeDate = (dateString: string): string => {
-  const now = new Date();
-  const postDate = new Date(dateString);
-  const diffInMs = now.getTime() - postDate.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-  if (diffInDays === 0) {
-    return "Today";
-  } else if (diffInDays === 1) {
-    return "1d ago";
-  } else {
-    return `${diffInDays}d ago`;
-  }
-};
-
-// Function to format full date
-const formatFullDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+// Helper function to format date
+function formatFullDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
-};
+}
 
 export default function PropertyPostClient({ params }: { params: { slug: string } }) {
   const router = useRouter();
@@ -139,8 +123,8 @@ export default function PropertyPostClient({ params }: { params: { slug: string 
       <div className="relative">
         {propertyBlog.hero_image && (
           <div className="relative h-[50vh] sm:h-[60vh] lg:h-[70vh] overflow-hidden">
-            <Image
-              src={propertyBlog.hero_image}
+            <SafeImage
+              s3Key={propertyBlog.hero_image}
               alt={propertyBlog.name}
               fill
               className="object-cover"
@@ -163,18 +147,23 @@ export default function PropertyPostClient({ params }: { params: { slug: string 
             </div>
 
             {/* Property Title Overlay */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-12">
-              <div className="max-w-4xl mx-auto">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 sm:p-8 lg:p-12">
+              <div className="container mx-auto">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white mb-4 leading-tight">
                   {propertyBlog.name}
                 </h1>
-                <div className="flex items-center gap-4 text-white/90">
-                  <span className="text-sm sm:text-base">
-                    {formatFullDate(propertyBlog.createdAt)}
+                <div className="flex items-center gap-4 text-white/90 text-sm sm:text-base">
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    Property Details
                   </span>
-                  <div className="w-1 h-1 bg-white/60 rounded-full"></div>
-                  <span className="text-sm sm:text-base">
-                    {formatRelativeDate(propertyBlog.createdAt)}
+                  <span className="flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V6a2 2 0 012-2h2a2 2 0 012 2v1m-6 0h6m-6 0v6a2 2 0 002 2h2a2 2 0 002-2V7" />
+                    </svg>
+                    {formatFullDate(propertyBlog.createdAt)}
                   </span>
                 </div>
               </div>
@@ -183,7 +172,7 @@ export default function PropertyPostClient({ params }: { params: { slug: string 
         )}
       </div>
 
-      {/* Content Section */}
+      {/* Main Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="max-w-4xl mx-auto">
           
@@ -217,8 +206,8 @@ export default function PropertyPostClient({ params }: { params: { slug: string 
                       setIsImageGalleryOpen(true);
                     }}
                   >
-                    <Image
-                      src={image}
+                    <SafeImage
+                      s3Key={image}
                       alt={`${propertyBlog.name} - Image ${index + 1}`}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -294,8 +283,8 @@ export default function PropertyPostClient({ params }: { params: { slug: string 
 
             {/* Current Image */}
             <div className="relative max-w-5xl max-h-[80vh]">
-              <Image
-                src={allImages[selectedImageIndex]}
+              <SafeImage
+                s3Key={allImages[selectedImageIndex]}
                 alt={`${propertyBlog.name} - Gallery Image`}
                 width={1200}
                 height={800}

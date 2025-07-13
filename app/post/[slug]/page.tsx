@@ -181,7 +181,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
         {post.coverImage && (
           <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px] rounded-3xl overflow-hidden mb-12 sm:mb-16 shadow-2xl shadow-gray-200/50">
               <SafeImage
-              src={post.coverImage}
+              s3Key={post.coverImage}
               alt={post.title}
               fill
               className="object-cover"
@@ -289,7 +289,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
                     {relatedPost.coverImage && (
                       <div className="relative h-48 w-full overflow-hidden">
                           <SafeImage
-                          src={relatedPost.coverImage}
+                          s3Key={relatedPost.coverImage}
                           alt={relatedPost.title}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-1000"

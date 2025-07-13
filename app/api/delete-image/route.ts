@@ -1,37 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { deleteFileFromS3, extractKeyFromPresignedUrl, isOurPresignedUrl } from '@/lib/s3'
+import { deleteFileFromS3 } from '@/lib/s3'
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { imageUrl } = await request.json()
+    const { s3Key } = await request.json()
 
-    if (!imageUrl) {
+    if (!s3Key) {
       return NextResponse.json(
-        { error: 'Image URL is required' },
+        { error: 'S3 key is required' },
         { status: 400 }
       )
     }
 
-    // Validate that this is our presigned URL
-    if (!isOurPresignedUrl(imageUrl)) {
+    // Validate that this is a valid S3 key for our images
+    if (!s3Key.startsWith('blog-images/') && !s3Key.startsWith('cover-images/')) {
       return NextResponse.json(
-        { error: 'Invalid image URL' },
-        { status: 400 }
-      )
-    }
-
-    // Extract the key from the presigned URL
-    const fileName = extractKeyFromPresignedUrl(imageUrl)
-
-    if (!fileName || !fileName.includes('blog-images/')) {
-      return NextResponse.json(
-        { error: 'Invalid image URL or not a blog image' },
+        { error: 'Invalid S3 key' },
         { status: 400 }
       )
     }
 
     // Delete from S3
-    await deleteFileFromS3(fileName)
+    await deleteFileFromS3(s3Key)
 
     return NextResponse.json({ success: true })
 

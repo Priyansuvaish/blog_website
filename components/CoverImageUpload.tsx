@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import Image from 'next/image'
+import SafeImage from './SafeImage'
 
 interface CoverImageUploadProps {
   value: string | null
-  onChange: (imageUrl: string | null) => void
+  onChange: (s3Key: string | null) => void
   onUploadStart?: () => void
   onUploadEnd?: () => void
 }
@@ -20,27 +20,7 @@ export default function CoverImageUpload({
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    await uploadCoverImage(file)
-  }
-
-  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    const file = event.dataTransfer.files?.[0]
-    if (!file) return
-
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file')
-      return
-    }
-
-    await uploadCoverImage(file)
-  }
-
-  const uploadCoverImage = async (file: File) => {
+  const handleFileUpload = async (file: File) => {
     setIsUploading(true)
     setError(null)
     onUploadStart?.()
@@ -76,7 +56,7 @@ export default function CoverImageUpload({
         throw new Error(result.error)
       }
 
-      onChange(result.url)
+      onChange(result.key)
     } catch (error) {
       console.error('Error uploading cover image:', error)
       setError(error instanceof Error ? error.message : 'Upload failed')
@@ -98,7 +78,7 @@ export default function CoverImageUpload({
       await fetch('/api/delete-image', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageUrl: value })
+        body: JSON.stringify({ s3Key: value })
       })
       
       onChange(null)
@@ -109,6 +89,14 @@ export default function CoverImageUpload({
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault()
+  }
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    const files = event.dataTransfer.files
+    if (files && files[0]) {
+      handleFileUpload(files[0])
+    }
   }
 
   return (
@@ -127,8 +115,8 @@ export default function CoverImageUpload({
         // Show existing cover image
         <div className="relative group">
           <div className="relative w-full h-64 rounded-lg overflow-hidden bg-gray-100">
-            <Image
-              src={value}
+            <SafeImage
+              s3Key={value}
               alt="Cover image"
               fill
               className="object-cover"
@@ -157,40 +145,29 @@ export default function CoverImageUpload({
       ) : (
         // Show upload area
         <div
-          onDrop={handleDrop}
+          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors"
           onDragOver={handleDragOver}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer"
-          onClick={() => fileInputRef.current?.click()}
+          onDrop={handleDrop}
         >
-          {isUploading ? (
-            <div className="space-y-2">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-sm text-gray-600">Uploading cover image...</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <svg
-                className="mx-auto h-12 w-12 text-gray-400"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 48 48"
-              >
-                <path
-                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-              <div className="text-sm text-gray-600">
-                <button type="button" className="font-medium text-blue-600 hover:text-blue-500">
-                  Click to upload
-                </button>
-                <span> or drag and drop</span>
-              </div>
-              <p className="text-xs text-gray-500">PNG, JPG, GIF, WebP up to 10MB</p>
-            </div>
-          )}
+          <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              disabled={isUploading}
+            >
+              {isUploading ? 'Uploading...' : 'Upload Cover Image'}
+            </button>
+          </div>
+          <p className="mt-2 text-sm text-gray-500">
+            or drag and drop an image here
+          </p>
+          <p className="text-xs text-gray-400">
+            PNG, JPG, GIF, WebP up to 10MB
+          </p>
         </div>
       )}
 
@@ -198,7 +175,12 @@ export default function CoverImageUpload({
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        onChange={handleFileSelect}
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) {
+            handleFileUpload(file)
+          }
+        }}
         className="hidden"
       />
     </div>

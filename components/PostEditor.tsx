@@ -36,34 +36,31 @@ export default function PostEditor({ post }: PostEditorProps) {
   const [initialImages, setInitialImages] = useState<string[]>([])
   const [initialCoverImage, setInitialCoverImage] = useState<string | null>(null)
 
-  // Extract image URLs from content (now works with presigned URLs)
-  const extractImageUrls = (htmlContent: string): string[] => {
-    const regex = /<img[^>]+src="([^">]+)"/gi
+  // Extract S3 keys from content
+  const extractS3Keys = (htmlContent: string): string[] => {
+    const regex = /<img[^>]+data-s3-key="([^">]+)"/gi
     const matches = []
     let match
     while ((match = regex.exec(htmlContent)) !== null) {
-      // Check if it's our S3 presigned URL
-      if (match[1].includes('propertydetail') && match[1].includes('amazonaws.com')) {
-        matches.push(match[1])
-      }
+      matches.push(match[1])
     }
     return matches
   }
 
   // Delete unused images from S3
   const deleteUnusedImages = async (currentImages: string[], newImages: string[]) => {
-    const imagesToDelete = currentImages.filter(img => !newImages.includes(img))
+    const imagesToDelete = currentImages.filter((img: string) => !newImages.includes(img))
     
-    for (const imageUrl of imagesToDelete) {
+    for (const s3Key of imagesToDelete) {
       try {
         await fetch('/api/delete-image', {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ imageUrl })
+          body: JSON.stringify({ s3Key })
         })
-        console.log('Deleted unused image:', imageUrl)
+        console.log('Deleted unused image:', s3Key)
       } catch (error) {
-        console.error('Failed to delete image:', imageUrl, error)
+        console.error('Failed to delete image:', s3Key, error)
       }
     }
   }
@@ -71,7 +68,7 @@ export default function PostEditor({ post }: PostEditorProps) {
   // Initialize with existing images when editing
   useEffect(() => {
     if (post?.content) {
-      const images = extractImageUrls(post.content)
+      const images = extractS3Keys(post.content)
       setInitialImages(images)
     }
     if (post?.coverImage) {
@@ -102,7 +99,7 @@ export default function PostEditor({ post }: PostEditorProps) {
 
     try {
       // Get current images from content
-      const currentImages = extractImageUrls(content)
+      const currentImages = extractS3Keys(content)
 
       const response = await fetch('/api/posts', {
         method: post ? 'PUT' : 'POST',
@@ -134,7 +131,7 @@ export default function PostEditor({ post }: PostEditorProps) {
             await fetch('/api/delete-image', {
               method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ imageUrl: initialCoverImage })
+              body: JSON.stringify({ s3Key: initialCoverImage })
             })
           } catch (error) {
             console.error('Failed to delete old cover image:', error)
@@ -157,11 +154,11 @@ export default function PostEditor({ post }: PostEditorProps) {
     
     // If editing existing post, clean up images in real-time
     if (post) {
-      const currentImages = extractImageUrls(content)
-      const newImages = extractImageUrls(newContent)
+      const currentImages = extractS3Keys(content)
+      const newImages = extractS3Keys(newContent)
       
       // Delete images that were removed
-      const removedImages = currentImages.filter(img => !newImages.includes(img))
+      const removedImages = currentImages.filter((img: string) => !newImages.includes(img))
       if (removedImages.length > 0) {
         deleteUnusedImages(removedImages, [])
       }

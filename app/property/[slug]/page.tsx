@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import ShareButton from '@/components/ShareButton'
+import SafeImage from '@/components/SafeImage'
 
 interface PropertyPost {
   _id: string
@@ -126,8 +126,8 @@ export default function PropertyPage() {
           {/* Hero Image */}
           {propertyPost.hero_image && (
             <div className="relative w-full h-96 md:h-[500px]">
-              <Image
-                src={propertyPost.hero_image}
+              <SafeImage
+                s3Key={propertyPost.hero_image}
                 alt={propertyPost.name}
                 fill
                 className="object-cover"
@@ -214,8 +214,8 @@ export default function PropertyPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {propertyPost.sub_images.map((image, index) => (
                     <div key={index} className="relative h-48 rounded-lg overflow-hidden group cursor-pointer">
-                      <Image
-                        src={image}
+                      <SafeImage
+                        s3Key={image}
                         alt={`${propertyPost.name} - Image ${index + 1}`}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -248,8 +248,8 @@ export default function PropertyPage() {
                   <article className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
                     {relatedProperty.hero_image && (
                       <div className="relative h-32 w-full">
-                        <Image
-                          src={relatedProperty.hero_image}
+                        <SafeImage
+                          s3Key={relatedProperty.hero_image}
                           alt={relatedProperty.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"

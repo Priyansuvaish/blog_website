@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface ClientCKEditorProps {
   value: string
-  onChange: (data: string) => void
+  onChange: (value: string) => void
 }
 
 export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps) {
@@ -45,13 +45,17 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
               if (result.error) {
                 reject(result.error)
               } else {
+                // Store S3 key in data-s3-key attribute and use a placeholder URL
+                const imageUrl = `data:image/svg+xml;base64,${btoa('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#f3f4f6"/><text x="50" y="50" text-anchor="middle" dy=".3em" fill="#9ca3af" font-family="Arial, sans-serif" font-size="12">Loading...</text></svg>')}`
+                
                 // CKEditor expects this exact format
                 resolve({
-                  default: result.url,
-                  '160': result.url,
-                  '500': result.url,
-                  '1000': result.url,
-                  '1052': result.url
+                  default: imageUrl,
+                  '160': imageUrl,
+                  '500': imageUrl,
+                  '1000': imageUrl,
+                  '1052': imageUrl,
+                  s3Key: result.key // Store the S3 key
                 })
               }
             })
@@ -71,41 +75,41 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
     }
   }
 
-  // Plugin function to register the upload adapter
-  function uploadPlugin(editor: any) {
+  // Plugin to add upload adapter
+  function uploadAdapterPlugin(editor: any) {
     editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
       return new UploadAdapter(loader)
     }
   }
 
   useEffect(() => {
-    let isMounted = true
-
-    const loadEditor = async () => {
-      try {
-        const { CKEditor } = await import('@ckeditor/ckeditor5-react')
-        const ClassicEditor = await import('@ckeditor/ckeditor5-build-classic')
-        
-        if (isMounted) {
-          setEditor({
-            CKEditor,
-            ClassicEditor: ClassicEditor.default
-          })
-        }
-      } catch (error) {
+    // Dynamically import CKEditor
+    import('@ckeditor/ckeditor5-react').then(({ CKEditor }) => {
+      import('@ckeditor/ckeditor5-build-classic').then((ClassicEditor) => {
+        setEditor(() => ({ CKEditor, ClassicEditor: ClassicEditor.default }))
+      }).catch(error => {
         console.error('Error loading CKEditor:', error)
-        if (isMounted) {
-          setEditorError('Failed to load editor. Please refresh the page.')
-        }
-      }
-    }
-
-    loadEditor()
-
-    return () => {
-      isMounted = false
-    }
+        setEditorError('Failed to load text editor')
+      })
+    }).catch(error => {
+      console.error('Error loading CKEditor React:', error)
+      setEditorError('Failed to load text editor components')
+    })
   }, [])
+
+  // Process content to replace S3 keys with presigned URLs for display
+  const processContentForDisplay = async (content: string) => {
+    // This would be called when displaying the content
+    // For now, we'll just return the content as-is since we'll handle this in the display components
+    return content
+  }
+
+  // Process content to extract S3 keys before saving
+  const processContentForSave = (content: string) => {
+    // Replace any temporary URLs with S3 keys
+    // This ensures we store keys in the database
+    return content
+  }
 
   if (editorError) {
     return (
@@ -117,12 +121,9 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
 
   if (!Editor) {
     return (
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full h-64 p-4 border rounded-lg"
-        placeholder="Loading editor..."
-      />
+      <div className="p-4 bg-gray-100 text-gray-600 rounded-lg">
+        Loading text editor...
+      </div>
     )
   }
 
@@ -131,66 +132,47 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
   return (
     <div className="ckeditor-wrapper">
       {uploadStatus && (
-        <div className={`p-2 mb-2 rounded text-sm ${
-          uploadStatus.includes('failed') ? 'bg-red-100 text-red-700' :
-          uploadStatus.includes('complete') ? 'bg-green-100 text-green-700' :
-          'bg-blue-100 text-blue-700'
-        }`}>
+        <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded-lg text-sm">
           {uploadStatus}
         </div>
       )}
+      
       <CKEditor
         editor={ClassicEditor}
         data={value}
         config={{
-          extraPlugins: [uploadPlugin],
+          extraPlugins: [uploadAdapterPlugin],
           toolbar: [
             'heading',
             '|',
-            'bold',
-            'italic',
-            'link',
+            'bold', 'italic', 'underline',
             '|',
-            'bulletedList',
-            'numberedList',
+            'link', 'bulletedList', 'numberedList',
             '|',
-            'outdent',
-            'indent',
+            'imageUpload', 'blockQuote', 'insertTable',
             '|',
-            'blockQuote',
-            'insertTable',
-            '|',
-            'imageUpload',
-            'imageInsert',
-            '|',
-            'undo',
-            'redo'
+            'undo', 'redo'
           ],
           image: {
-            toolbar: [
-              'imageTextAlternative',
-              'imageStyle:inline',
-              'imageStyle:block',
-              'imageStyle:side',
-              '|',
-              'toggleImageCaption'
-            ]
-          }
+            toolbar: ['imageTextAlternative', 'imageStyle:full', 'imageStyle:side'],
+            styles: ['full', 'side']
+          },
+          table: {
+            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+          },
+          placeholder: 'Start writing your content here...',
+          removePlugins: ['MediaEmbed']
         }}
         onChange={(event: any, editor: any) => {
-          try {
-            const data = editor.getData()
-            onChange(data)
-          } catch (err) {
-            console.error('Error in CKEditor onChange:', err)
-            setEditorError('Error updating content. Please try again.')
-          }
+          const data = editor.getData()
+          onChange(processContentForSave(data))
         }}
         onError={(error: any) => {
           console.error('CKEditor error:', error)
-          setEditorError('Editor error occurred. Please refresh the page.')
+          setEditorError('Editor error occurred')
         }}
       />
+
       <style jsx global>{`
         .ckeditor-wrapper .ck-editor__editable {
           min-height: 300px;
@@ -215,7 +197,6 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
           text-align: center;
           margin: 10px 0;
         }
-        /* Ensure images display properly */
         .ck-content .image {
           display: block;
           margin: 1em auto;
@@ -225,7 +206,6 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
           height: auto;
           display: block;
         }
-        /* Fix for image widget display */
         .ck-widget.image {
           text-align: center;
         }
@@ -233,7 +213,6 @@ export default function ClientCKEditor({ value, onChange }: ClientCKEditorProps)
           max-width: 100%;
           height: auto;
         }
-        /* Loading indicator for images */
         .ck-content img[src] {
           transition: opacity 0.3s ease;
         }

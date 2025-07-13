@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
+import SafeImage from '@/components/SafeImage'
 
 interface Post {
   _id: string
@@ -130,8 +130,8 @@ export default function AdminPosts() {
                 {/* Cover Image */}
                 <div className="w-48 h-32 flex-shrink-0 relative bg-gray-100">
                   {post.coverImage ? (
-                    <Image
-                      src={post.coverImage}
+                    <SafeImage
+                      s3Key={post.coverImage}
                       alt={post.title}
                       fill
                       className="object-cover"
