@@ -66,6 +66,7 @@ export default function HomePage() {
   const [propertyPosts, setPropertyPosts] = useState<PropertyPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'categories' | 'properties' | 'latest'>('categories');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,11 +124,14 @@ export default function HomePage() {
         <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24">
           <div className="bg-red-50 border border-red-200 text-red-800 px-4 sm:px-6 py-4 rounded-xl text-center max-w-md mx-auto">
             <p className="font-medium text-sm sm:text-base">{error}</p>
-          </div>
-        </div>
+                  </div>
       </div>
-    );
-  }
+
+      {/* Mobile Bottom Spacing */}
+      <div className="xl:hidden h-8"></div>
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-white">
@@ -171,8 +175,157 @@ export default function HomePage() {
               
             </div>
 
-            {/* Categories Section */}
-            <div className="mb-16 sm:mb-20">
+            {/* Mobile Header - Hidden on desktop */}
+            <div className="xl:hidden px-4 pt-6 pb-4 bg-gradient-to-b from-[#009FFF]/5 to-transparent">
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-light text-gray-900 mb-2 tracking-tight">
+                  Earthfields Journal
+                </h1>
+                <p className="text-sm text-gray-600 font-light">
+                  Discover insights and stories
+                </p>
+              </div>
+            </div>
+
+            {/* Mobile Navigation Tabs - Hidden on desktop */}
+            <div className="xl:hidden px-4 mb-6">
+              <div className="flex bg-gray-50 rounded-2xl p-1 shadow-inner">
+                <button
+                  onClick={() => setActiveTab('categories')}
+                  className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    activeTab === 'categories' 
+                      ? 'bg-white text-[#009FFF] shadow-md' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    Topics
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveTab('properties')}
+                  className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    activeTab === 'properties' 
+                      ? 'bg-white text-[#009FFF] shadow-md' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                    </svg>
+                    Lands
+                  </div>
+                </button>
+                <button
+                  onClick={() => setActiveTab('latest')}
+                  className={`flex-1 py-3 px-4 rounded-xl text-sm font-medium transition-all duration-300 ${
+                    activeTab === 'latest' 
+                      ? 'bg-white text-[#009FFF] shadow-md' 
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Latest
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile Categories Tab Content */}
+            <div className="xl:hidden">
+              {activeTab === 'categories' && (
+                <div className="space-y-4">
+                  <div className="mb-6">
+                    <h2 className="text-xl font-light text-gray-900 mb-1 tracking-tight">
+                      Explore Topics
+                    </h2>
+                    <p className="text-sm text-gray-600 font-light">
+                      Discover content across categories
+                    </p>
+                  </div>
+
+                  {categories.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
+                      <p className="text-gray-500 font-light text-sm">Categories will appear here once they are created.</p>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4 grid-cols-1">
+                      {categories.map((category, index) => (
+                        <Link
+                          key={category._id}
+                          href={`/category/${encodeURIComponent(category.name)}`}
+                          className="group"
+                        >
+                          <div className="relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#009FFF]/30 transition-all duration-500 hover:shadow-xl hover:shadow-[#009FFF]/10 active:scale-95">
+                            {/* Mobile Card Content */}
+                            <div className="p-5">
+                              <div className="flex items-start gap-4">
+                                {/* Icon */}
+                                <div className="flex-shrink-0">
+                                  <div className="w-12 h-12 bg-gradient-to-br from-[#009FFF]/10 to-[#009FFF]/5 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <CategoryIcon
+                                      iconName={category.icon || "MdCategory"}
+                                      className="w-6 h-6 text-[#009FFF]"
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <h3 className="text-lg font-medium text-gray-900 group-hover:text-[#009FFF] transition-colors duration-300 truncate">
+                                      {category.name}
+                                    </h3>
+                                    {category.hasNewPosts && (
+                                      <div className="w-2 h-2 bg-[#009FFF] rounded-full animate-pulse"></div>
+                                    )}
+                                  </div>
+                                  
+                                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                                    Explore insights and articles about {category.name.toLowerCase()}
+                                  </p>
+                                  
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-gray-500">
+                                      {category.post_ids?.length || 0} {(category.post_ids?.length || 0) === 1 ? 'article' : 'articles'}
+                                    </span>
+                                    
+                                    <div className="flex items-center text-gray-400 group-hover:text-[#009FFF] transition-colors duration-300">
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                      </svg>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Mobile Bottom Accent */}
+                            <div className="h-1 bg-gradient-to-r from-[#009FFF] to-[#007ACC] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Categories Section - Desktop Only */}
+            <div className="hidden xl:block mb-16 sm:mb-20">
               <div className="mb-8 sm:mb-12">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 mb-2 sm:mb-3 tracking-tight">
                   Explore Topics
@@ -304,8 +457,186 @@ export default function HomePage() {
               )}
             </div>
 
+            {/* Mobile Properties Tab Content */}
+            <div className="xl:hidden">
+              {activeTab === 'properties' && (
+                <div className="space-y-4">
+                  <div className="mb-6">
+                    <h2 className="text-xl font-light text-gray-900 mb-1 tracking-tight">
+                      Featured Lands
+                    </h2>
+                    <p className="text-sm text-gray-600 font-light">
+                      Latest property listings
+                    </p>
+                  </div>
+
+                  {propertyPosts.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No properties yet</h3>
+                      <p className="text-gray-500 font-light text-sm">Property posts will appear here once they are created.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {propertyPosts.map((propertyPost) => (
+                        <Link
+                          key={propertyPost._id}
+                          href={`/property-post/${propertyPost.slug}`}
+                          className="group block"
+                        >
+                          <article className="relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#009FFF]/30 transition-all duration-500 hover:shadow-xl hover:shadow-[#009FFF]/10 active:scale-95">
+                            {/* Mobile Property Card */}
+                            <div className="relative">
+                              {/* Hero Image */}
+                              {propertyPost.hero_image && (
+                                <div className="relative h-48 w-full overflow-hidden">
+                                  <SafeImage
+                                    s3Key={propertyPost.hero_image}
+                                    alt={propertyPost.name}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                  />
+                                  
+                                  {/* Gradient Overlay */}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                                  
+                                  {/* Badge */}
+                                  <div className="absolute top-3 right-3">
+                                    <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-medium">
+                                      Featured
+                                    </span>
+                                  </div>
+
+                                  {/* Title Overlay */}
+                                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 className="text-lg font-medium text-white mb-1 line-clamp-2">
+                                      {propertyPost.name}
+                                    </h3>
+                                    <span className="text-xs text-white/80">
+                                      {formatRelativeDate(propertyPost.createdAt)}
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Content Preview */}
+                              <div className="p-4">
+                                <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                                  {propertyPost.content.replace(/<[^>]*>/g, '').substring(0, 100)}...
+                                </p>
+                                
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs bg-[#009FFF]/10 text-[#009FFF] px-2 py-1 rounded-full">
+                                    Property Listing
+                                  </span>
+                                  
+                                  <div className="flex items-center text-gray-400 group-hover:text-[#009FFF] transition-colors duration-300">
+                                    <span className="text-xs mr-1">View</span>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </article>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Latest Posts Tab Content */}
+            <div className="xl:hidden">
+              {activeTab === 'latest' && (
+                <div className="space-y-4">
+                  <div className="mb-6">
+                    <h2 className="text-xl font-light text-gray-900 mb-1 tracking-tight">
+                      Latest Stories
+                    </h2>
+                    <p className="text-sm text-gray-600 font-light">
+                      Recent articles and updates
+                    </p>
+                  </div>
+
+                  {latestPosts.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No posts yet</h3>
+                      <p className="text-gray-500 font-light text-sm">Recent posts will appear here once they are created.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {latestPosts.map((post, index) => (
+                        <Link
+                          key={post._id}
+                          href={`/post/${post.slug}`}
+                          className="group block"
+                        >
+                          <article className="relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#009FFF]/30 transition-all duration-500 hover:shadow-lg active:scale-95">
+                            <div className="flex items-start gap-4 p-4">
+                              {/* Index */}
+                              <div className="flex-shrink-0">
+                                <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-[#009FFF]/10 transition-colors duration-300">
+                                  <span className="text-xs font-medium text-gray-600 group-hover:text-[#009FFF]">
+                                    {String(index + 1).padStart(2, '0')}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-medium text-gray-900 text-sm mb-2 line-clamp-2 group-hover:text-[#009FFF] transition-colors duration-300">
+                                  {post.title}
+                                </h4>
+                                
+                                <div className="flex items-center justify-between text-xs text-gray-500">
+                                  <span>{formatRelativeDate(post.createdAt)}</span>
+                                  <div className="flex items-center group-hover:text-[#009FFF] transition-colors duration-300">
+                                    <span className="mr-1">Read</span>
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Cover Image Thumbnail */}
+                              {post.coverImage && (
+                                <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden">
+                                  <SafeImage
+                                    s3Key={post.coverImage}
+                                    alt={post.title}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Bottom Accent */}
+                            <div className="h-0.5 bg-gradient-to-r from-[#009FFF] to-[#007ACC] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                          </article>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             {/* Property Posts Section */}
-            <div>
+            <div className="hidden xl:block">
               <div className="mb-8 sm:mb-12">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 mb-2 sm:mb-3 tracking-tight">
                   Featured Lands
@@ -440,7 +771,7 @@ export default function HomePage() {
           </div>
 
           {/* Right Side - Latest Posts Sidebar */}
-          <div className="xl:w-1/4">
+          <div className="hidden xl:block xl:w-1/4">
             <div className="xl:sticky xl:top-8">
               <div className="mb-6 sm:mb-8">
                 <h2 className="text-xl sm:text-2xl font-light text-gray-900 mb-2 tracking-tight">
