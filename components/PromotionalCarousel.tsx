@@ -23,8 +23,8 @@ interface CarouselSlide {
 const carouselData: CarouselSlide[] = [
   {
     id: 1,
-    title: "Land Services",
-    subtitle: "Modern Tools & Traditional Land Services",
+    title: "Land Services (Coming Soon)",
+    subtitle: "Traditional Land Services",
     items: [
       { text: "Legal/Liaisoning", link: "https://www.earthfields.in/signup", icon: Gavel },
       { text: "Drone Services", link: "https://www.earthfields.in/signup", icon: Rocket },

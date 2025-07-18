@@ -308,7 +308,7 @@ export default function HomePage() {
             <div>
               <div className="mb-8 sm:mb-12">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 mb-2 sm:mb-3 tracking-tight">
-                  Featured Properties
+                  Featured Lands
                 </h2>
                 <p className="text-base sm:text-lg text-gray-600 font-light">
                   Explore our latest property listings and insights
@@ -372,7 +372,7 @@ export default function HomePage() {
                             {/* Floating Badge with Animation */}
                             <div className="absolute top-4 sm:top-6 right-4 sm:right-6 transform group-hover:scale-110 transition-transform duration-300">
                               <span className="bg-white/95 backdrop-blur-sm text-gray-800 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-medium shadow-lg border border-white/20">
-                                Featured Property
+                                Featured Land
                               </span>
                             </div>
 
