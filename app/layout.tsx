@@ -119,6 +119,11 @@ export default function RootLayout({
         <link rel="alternate" type="application/rss+xml" title="Earthfields Blog RSS Feed" href="/feed.xml" />
         <meta name="theme-color" content="#009FFF" />
         <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3215982645128880"
+          crossOrigin="anonymous"
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />

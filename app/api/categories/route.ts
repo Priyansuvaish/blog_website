@@ -8,26 +8,38 @@ export async function GET() {
   try {
     await connectDB()
     
-    // Ensure Post model is registered before populate
+    // Ensure Post model is registered
     Post
     
-    const categories = await Category.find({}).populate('post_ids', 'title slug createdAt').sort({ name: 1 })
+    // Get all categories (without populating post_ids since we'll query dynamically)
+    const categories = await Category.find({}).sort({ name: 1 })
     
-    // Add hasNewPosts flag for each category
-    const categoriesWithNewPostFlag = categories.map(category => {
-      const today = new Date().toDateString()
-      const hasNewPosts = category.post_ids.some((post: any) => {
-        const postDate = new Date(post.createdAt).toDateString()
-        return postDate === today
+    // Dynamically populate post_ids by querying posts for each category
+    const categoriesWithDynamicPosts = await Promise.all(
+      categories.map(async (category) => {
+        // Query posts that belong to this category
+        const posts = await Post.find({ category: category.name })
+          .select('title slug createdAt')
+          .sort({ createdAt: -1 })
+          .lean()
+        
+        // Check if category has posts created today
+        const today = new Date().toDateString()
+        const hasNewPosts = posts.some((post: any) => {
+          const postDate = new Date(post.createdAt).toDateString()
+          return postDate === today
+        })
+        
+        // Return category with dynamically populated post_ids
+        return {
+          ...category.toObject(),
+          post_ids: posts, // Dynamically populated with current posts
+          hasNewPosts
+        }
       })
-      
-      return {
-        ...category.toObject(),
-        hasNewPosts
-      }
-    })
+    )
     
-    return NextResponse.json(categoriesWithNewPostFlag)
+    return NextResponse.json(categoriesWithDynamicPosts)
   } catch (error) {
     console.error('Error fetching categories:', error)
     return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
