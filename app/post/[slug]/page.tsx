@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import CommentSection from '@/components/CommentSection'
 import ShareButton from '@/components/ShareButton'
 import SafeImage from '@/components/SafeImage'
+import EmailSubscription from '@/components/EmailSubscription'
 import connectDB from '@/lib/mongodb'
 import Post from '@/models/Post'
 
@@ -258,6 +259,11 @@ export default async function PostPage({ params }: { params: { slug: string } })
             </div>
           </div>
         </article>
+
+        {/* Email Subscription */}
+        <section className="mb-16 sm:mb-20">
+          <EmailSubscription />
+        </section>
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
