@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import BlogSubscribers from '@/models/BlogSubscribers';
+import BlogSubscribers, { BlogSubscriberUtils } from '@/models/BlogSubscribers';
 
-// POST - Subscribe email
+// POST - Subscribe email or update email
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
     
-    const { email } = await request.json();
+    const { email, oldEmail, action } = await request.json();
     
     if (!email || !email.trim()) {
       return NextResponse.json(
@@ -25,32 +25,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if email already exists
-    const existingSubscriber = await BlogSubscribers.findOne({ email: email.toLowerCase().trim() });
-    
-    if (existingSubscriber) {
+    // Handle email update
+    if (action === 'update' && oldEmail) {
+      const result = await BlogSubscriberUtils.updateSubscriberEmail(oldEmail, email);
+      
+      if (!result.success) {
+        return NextResponse.json(
+          { error: result.message },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json(
-        { message: 'Email already subscribed', alreadySubscribed: true },
+        { 
+          message: result.message, 
+          subscribed: true,
+          alreadySubscribed: result.alreadySubscribed 
+        },
         { status: 200 }
       );
     }
 
-    // Create new subscriber
-    const newSubscriber = new BlogSubscribers({
-      email: email.toLowerCase().trim(),
-    });
-
-    await newSubscriber.save();
-
+    // Handle new subscription
+    const result = await BlogSubscriberUtils.subscribeEmail(email);
+    
     return NextResponse.json(
-      { message: 'Successfully subscribed!', subscribed: true },
-      { status: 201 }
+      { 
+        message: result.message, 
+        subscribed: true,
+        alreadySubscribed: result.alreadySubscribed 
+      },
+      { status: result.alreadySubscribed ? 200 : 201 }
     );
     
   } catch (error) {
     console.error('Subscription error:', error);
     return NextResponse.json(
-      { error: 'Failed to subscribe. Please try again later.' },
+      { error: 'Failed to process subscription. Please try again later.' },
       { status: 500 }
     );
   }
@@ -71,10 +82,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const subscriber = await BlogSubscribers.findOne({ email: email.toLowerCase().trim() });
+    const isSubscribed = await BlogSubscriberUtils.isEmailSubscribed(email);
     
     return NextResponse.json({
-      subscribed: !!subscriber
+      subscribed: isSubscribed
     });
     
   } catch (error) {
