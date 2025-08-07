@@ -220,12 +220,16 @@ export default function AboutClient() {
                   Join thousands of satisfied customers who have simplified their land dealings with Earthfields
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <a href="https://earthfields.in/signup" target="_blank" rel="noopener noreferrer">
                   <button className="bg-white text-[#009FFF] px-8 py-4 rounded-2xl font-medium hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-lg">
                     Get Started Today
                   </button>
+                  </a>
+                  <a href="https://earthfields.in/request-demo" target="_blank" rel="noopener noreferrer">
                   <button className="border-2 border-white text-white px-8 py-4 rounded-2xl font-medium hover:bg-white/10 transition-all duration-300">
                     Learn More
                   </button>
+                  </a>
                 </div>
               </div>
             </div>

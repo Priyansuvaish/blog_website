@@ -235,7 +235,19 @@ export default function PromotionalCarousel() {
                           {/* Text */}
                           <div className="text-center">
                             <span className="text-white text-xs sm:text-sm font-medium group-hover:text-[#009FFF] transition-colors duration-300 block leading-tight">
-                              {item.text}
+                              {item.text === "Legal/Liaisoning" ? (
+                                <>
+                                  <span className="xl:hidden">Legal/<br />Liaisoning</span>
+                                  <span className="hidden xl:inline">Legal/Liaisoning</span>
+                                </>
+                              ) : item.text === "Architecture/Design" ? (
+                                <>
+                                  <span className="xl:hidden">Architecture/<br />Design</span>
+                                  <span className="hidden xl:inline">Architecture/Design</span>
+                                </>
+                              ) : (
+                                item.text
+                              )}
                             </span>
                           </div>
                           
@@ -310,7 +322,13 @@ export default function PromotionalCarousel() {
                       {/* Text */}
                       <div className="text-center">
                         <span className="text-white text-xs font-medium group-active:text-[#009FFF] transition-colors duration-200 block leading-tight">
-                          {item.text}
+                          {item.text === "Legal/Liaisoning" ? (
+                            <>Legal/<br />Liaisoning</>
+                          ) : item.text === "Architecture/Design" ? (
+                            <>Architecture/<br />Design</>
+                          ) : (
+                            item.text
+                          )}
                         </span>
                       </div>
                     </div>
