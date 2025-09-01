@@ -134,7 +134,7 @@ export default function RootLayout({
         <main className="min-h-screen bg-gray-50">
           {children}
         </main>
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID as string} />
+        <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
       </body>
     </html>
   )
