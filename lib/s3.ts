@@ -1,16 +1,17 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
-// Configure AWS S3 client
+// Server-only AWS S3 client. Never import this file from a 'use client' component —
+// these env vars must NOT carry a NEXT_PUBLIC_ prefix, or Next.js inlines the secret into the client bundle.
 export const s3Client = new S3Client({
-  region: process.env.NEXT_PUBLIC_AWS_REGION || 'ap-southeast-2',
+  region: process.env.AWS_REGION || 'ap-southeast-2',
   credentials: {
-    accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID || '',
-    secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY || '',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   },
 })
 
-export const BUCKET_NAME = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || 'propertydetail'
+export const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || 'propertydetail'
 
 // Generate presigned URL for viewing images (7 days expiration - max allowed)
 export const generatePresignedUrl = async (key: string): Promise<string> => {

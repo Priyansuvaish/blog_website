@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { generatePresignedUrl } from '@/lib/s3'
 
 interface SafeImageProps {
   s3Key: string
@@ -34,8 +33,10 @@ export default function SafeImage({
     const getImageUrl = async () => {
       try {
         setIsLoading(true)
-        const presignedUrl = await generatePresignedUrl(s3Key)
-        setImgSrc(presignedUrl)
+        const res = await fetch(`/api/s3-image?key=${encodeURIComponent(s3Key)}`)
+        if (!res.ok) throw new Error('Failed to fetch image URL')
+        const { url } = await res.json()
+        setImgSrc(url)
       } catch (error) {
         console.error('Error generating presigned URL:', error)
         setHasError(true)
